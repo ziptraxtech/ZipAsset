@@ -5,6 +5,7 @@ import BrandLogo from "./BrandLogo";
 
 const navItems = [
   { label: "Segments", href: "#segments" },
+  { label: "Franchise", href: "#franchise" },
   { label: "Investor Deck", href: "#investordeck" },
   { label: "Contact", href: "#contact" },
   { label: "About Us", href: "#aboutus" },

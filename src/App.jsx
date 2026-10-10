@@ -14,6 +14,7 @@ import SegmentsShowcase from "./components/SegmentsShowcase";
 import BatteryStoragePage from "./components/BatteryStoragePage";
 import EvChargingPage from "./components/EvChargingPage";
 import EvPassengerFleetsPage from "./components/EvPassengerFleetsPage";
+import FranchiseSection from "./components/FranchiseSection";
 import {
   marketStats,
   marketplaceHighlights,
@@ -415,6 +416,8 @@ function App() {
             </section>
 
             {/* ── MARKETPLACE ────────────────── */}
+            <FranchiseSection />
+
             <section id="marketplace" className="mt-8 sm:mt-10">
               <div className="mb-3 flex flex-wrap items-end justify-between gap-3 sm:mb-4">
                 <div>
