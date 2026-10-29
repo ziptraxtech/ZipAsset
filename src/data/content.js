@@ -244,13 +244,13 @@ export const segmentProcess = [
 export const segments = [
   {
     id: "charger-6kw-ac",
-    name: "6 kW AC Charger",
+    name: "6 kW DC Charger",
     power: "6 kW",
     site: "Homes, apartment parking and workplace bays",
-    useCase: "Overnight AC charging",
+    useCase: "Overnight DC charging",
     description:
-      "A compact AC charger built for long-dwell parking where vehicles can charge gradually over several hours with a simpler electrical setup.",
-    features: ["Easy wall-mount installation", "Ideal for overnight parking", "Low infrastructure load"],
+      "A compact DC charger suited to long-dwell parking at homes, apartments and workplaces, where vehicles remain parked for several hours.",
+    features: ["Easy wall-mount installation", "Ideal for overnight parking", "Suited to long-dwell sites"],
     risk: "Low Risk",
     riskLevel: "Low",
     yieldRate: 9.5,
@@ -266,13 +266,13 @@ export const segments = [
   },
   {
     id: "charger-12kw-ac",
-    name: "12 kW AC Charger",
+    name: "12 kW DC Charger",
     power: "12 kW",
     site: "Hotels, offices and premium destination parking",
-    useCase: "Destination AC charging",
+    useCase: "Destination DC charging",
     description:
-      "A higher-capacity AC charger suited to destination locations where drivers stay for multiple hours and operators want stronger daily throughput than entry AC setups.",
-    features: ["Balanced AC power level", "Good fit for destination parking", "Lower capex than DC fast charging"],
+      "A higher-capacity DC charger suited to destination locations where drivers stay for multiple hours and operators want more daily throughput.",
+    features: ["Balanced charging power", "Good fit for destination parking", "Designed for destination charging"],
     risk: "Low Risk",
     riskLevel: "Low",
     yieldRate: 10.5,

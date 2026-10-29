@@ -135,7 +135,7 @@ function App() {
                 {/* Left copy */}
                 <div className="hero-copy space-y-5 sm:space-y-6">
                   <div className="eyebrow-chip eyebrow-chip-zip hero-kicker">
-                    EV charging equipment for real-world sites
+                    Charging for homes, workplaces, fleets and public sites
                   </div>
 
                   <div className="space-y-3 sm:space-y-4">
@@ -147,7 +147,7 @@ function App() {
                       <span className="hero-title-line">ZipAsset</span>
                     </h1>
                     <p className="hero-subtitle max-w-2xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8 md:text-lg">
-                      Explore AC and DC charger models for homes, businesses, fleets and travel corridors. Tell us what you need and our team will help you find the right fit.
+                      Explore AC and DC chargers for homes, workplaces, fleets and public charging locations. Share your site and charging needs, and our team will help you find the right fit.
                     </p>
                   </div>
 
