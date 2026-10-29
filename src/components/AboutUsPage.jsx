@@ -1,6 +1,6 @@
 const chargerUseCases = [
   {
-    power: "6–12 kW AC",
+    power: "6–12 kW DC",
     title: "Long-stay charging",
     description:
       "A starting point for homes, apartments, workplaces, hotels, and destination parking.",
@@ -28,7 +28,7 @@ function AboutUsPage() {
             About ZipAsset
           </p>
           <h1 className="mt-4 max-w-4xl text-4xl font-black tracking-[-0.05em] text-white sm:text-5xl md:text-6xl">
-            EV charging equipment for real-world sites.
+            Charging for homes, workplaces, fleets and public sites.
           </h1>
           <p className="mt-5 max-w-3xl text-sm leading-7 text-blue-100/75 sm:text-base sm:leading-8">
             ZipAsset is a product of Zipbolt Innovations Private Limited. We

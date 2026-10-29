@@ -7,7 +7,7 @@ const faqs = [
   },
   {
     q: "What charger models are shown?",
-    a: "The product range shown includes 6 kW and 12 kW AC chargers, and 30 kW, 60 kW, 120 kW, 180 kW, and 240 kW DC chargers. Specifications, compatibility, and availability should be confirmed for your project.",
+    a: "The product range shown includes 6 kW, 12 kW, 30 kW, 60 kW, 120 kW, 180 kW, and 240 kW DC chargers. Specifications, compatibility, and availability should be confirmed for your project.",
   },
   {
     q: "How do I choose the right charger?",

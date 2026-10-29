@@ -12,8 +12,8 @@ const navItems = [
 ];
 
 const chargerMenuLabels = {
-  "charger-6kw-ac": "6 kW AC",
-  "charger-12kw-ac": "12 kW AC",
+  "charger-6kw-ac": "6 kW DC",
+  "charger-12kw-ac": "12 kW DC",
   "charger-30kw": "30 kW Urban",
   "charger-60kw": "60 kW Retail",
   "charger-120kw": "120 kW Highway",
