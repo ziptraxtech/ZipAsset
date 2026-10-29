@@ -6,7 +6,10 @@ function SegmentsShowcase({ embedded = false }) {
   const [searchTerm, setSearchTerm] = useState("");
 
   const normalizedSearch = searchTerm.trim().toLowerCase();
-  const filteredSegments = investyzSegmentsLive.filter((segment) => {
+  const investableSegments = investyzSegmentsLive.filter(
+    (segment) => segment.category !== "EV DC Fast Charging",
+  );
+  const filteredSegments = investableSegments.filter((segment) => {
     if (!normalizedSearch) {
       return true;
     }

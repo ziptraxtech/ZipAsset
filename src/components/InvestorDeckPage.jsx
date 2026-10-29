@@ -1,592 +1,387 @@
-import { useState, useEffect } from "react";
-import { segments, marketStats, steps, marketplaceHighlights } from "../data/content";
+import { useEffect, useState } from "react";
 
-function Slide({ children, className = "" }) {
-  return (
-    <div
-      className={`relative mx-auto w-[min(1180px,calc(100%-22px))] md:w-[min(1180px,calc(100%-32px))] ${className}`}
-    >
-      {children}
-    </div>
-  );
-}
+const chargerClasses = [
+  { power: "6 kW", use: "Home & long-stay parking" },
+  { power: "12 kW", use: "Hotels & destination sites" },
+  { power: "30 kW", use: "Urban retail & workplaces" },
+  { power: "60 kW", use: "Commercial fast charging" },
+  { power: "120 kW", use: "Highway & city corridors" },
+  { power: "180 kW", use: "Travel & logistics hubs" },
+  { power: "240 kW", use: "Fleet depots & major hubs" },
+];
 
-function DeckSlide({ title, subtitle, children, accent = "brand" }) {
-  const accentColors = {
-    brand: "border-l-[#2a56c6] bg-gradient-to-br from-[#0a1738] via-[#0f1d4a] to-[#0a1738]",
-    cyan: "border-l-cyan-400 bg-gradient-to-br from-[#0a1738] via-[#0c1f3a] to-[#0a1738]",
-    emerald: "border-l-emerald-400 bg-gradient-to-br from-[#0a1738] via-[#0c1f2e] to-[#0a1738]",
-    amber: "border-l-amber-400 bg-gradient-to-br from-[#0a1738] via-[#1f1a0a] to-[#0a1738]",
+const opportunityThemes = [
+  {
+    name: "EV charging",
+    note: "The clearest product fit: charger classes from 6 kW to 240 kW.",
+  },
+  {
+    name: "Battery storage",
+    note: "A complementary theme for energy management and charging resilience.",
+  },
+  {
+    name: "Passenger & cargo fleets",
+    note: "Mobility themes linked to fleet charging, utilization, and routes.",
+  },
+];
+
+function DeckSlide({ title, subtitle, children, accent = "blue" }) {
+  const accentClasses = {
+    blue: "border-l-blue-500",
+    cyan: "border-l-cyan-400",
+    green: "border-l-emerald-400",
+    amber: "border-l-amber-400",
   };
 
   return (
-    <div
-      className={`relative rounded-[20px] border border-white/10 ${accentColors[accent] || accentColors.brand} p-8 shadow-[0_30px_80px_rgba(10,23,56,0.4)] md:p-12`}
+    <section
+      aria-label={title}
+      className={`rounded-[20px] border border-white/10 border-l-4 ${accentClasses[accent]} bg-gradient-to-br from-[#0a1738] via-[#0f1d4a] to-[#0a1738] p-6 shadow-[0_30px_80px_rgba(10,23,56,0.4)] sm:p-9 md:p-12`}
     >
-      <div className="absolute bottom-0 left-0 top-0 w-1 rounded-l-[20px]" />
-      <div className="ml-4">
-        {title && (
-          <h2 className="text-2xl font-black tracking-[-0.03em] text-white sm:text-3xl md:text-4xl">
-            {title}
-          </h2>
-        )}
-        {subtitle && (
-          <p className="mt-3 text-sm leading-7 text-blue-200/80 md:text-base">
-            {subtitle}
-          </p>
-        )}
-        <div className="mt-6">{children}</div>
-      </div>
-    </div>
+      <h2 className="text-2xl font-black tracking-[-0.03em] text-white sm:text-3xl md:text-4xl">
+        {title}
+      </h2>
+      {subtitle && (
+        <p className="mt-3 max-w-3xl text-sm leading-7 text-blue-200/80 md:text-base">
+          {subtitle}
+        </p>
+      )}
+      <div className="mt-6">{children}</div>
+    </section>
   );
 }
 
-function StatGrid({ stats }) {
+function Card({ eyebrow, title, children }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
-      {stats.map((stat) => (
-        <div
-          key={stat.label}
-          className="rounded-[16px] border border-white/10 bg-white/8 p-5 backdrop-blur-sm"
-        >
-          <div className="text-2xl font-black tracking-[-0.04em] text-white">
-            {stat.value}
-          </div>
-          <div className="mt-2 text-xs font-semibold uppercase tracking-[0.22em] text-blue-200/70">
-            {stat.label}
-          </div>
-        </div>
-      ))}
+    <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-5">
+      {eyebrow && (
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-200/65">
+          {eyebrow}
+        </p>
+      )}
+      <h3 className="mt-2 font-bold text-white">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-blue-100/70">{children}</p>
     </div>
-  );
-}
-
-function RiskBadge({ level }) {
-  const styles = {
-    Low: "border-emerald-400/30 bg-emerald-400/10 text-emerald-300",
-    Medium: "border-amber-400/30 bg-amber-400/10 text-amber-300",
-    High: "border-rose-400/30 bg-rose-400/10 text-rose-300",
-  };
-  return (
-    <span
-      className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wider ${styles[level] || styles.Low}`}
-    >
-      {level} Risk
-    </span>
   );
 }
 
 function InvestorDeckPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const totalSlides = 9;
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-        setCurrentSlide((prev) => Math.min(prev + 1, totalSlides - 1));
-      }
-      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-        setCurrentSlide((prev) => Math.max(prev - 1, 0));
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
-  const slideComponents = [
-    <Slide key="cover">
-      <div className="flex min-h-[65vh] flex-col items-center justify-center rounded-[20px] border border-white/10 bg-gradient-to-br from-[#0a1738] via-[#0f1d4a] to-[#0a1738] p-8 text-center shadow-[0_30px_80px_rgba(10,23,56,0.4)] md:p-12">
-        <div className="eyebrow-chip mb-6 inline-flex border-white/20 bg-white/10 text-blue-200">
-          Investor Deck
-        </div>
-        <h1 className="text-5xl font-black tracking-[-0.05em] text-white sm:text-6xl md:text-7xl lg:text-[8rem]">
-          <span className="block">ZipAsset</span>
-          <span className="mt-2 block text-blue-200">EV Charging</span>
-          <span className="mt-1 block text-white">Infrastructure</span>
-        </h1>
-        <p className="mt-8 max-w-2xl text-base leading-8 text-blue-100/80 sm:text-lg">
-          Invest in revenue-generating EV charging assets across India&apos;s
-          fastest-growing mobility corridors. Fractional ownership, transparent
-          underwriting, and asset-backed returns.
-        </p>
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <button
-            type="button"
-            onClick={() => setCurrentSlide(1)}
-            className="primary-button px-8 py-4 text-base"
-          >
-            Explore the Deck
-          </button>
-          <a
-            href="#calculator"
-            onClick={() => setCurrentSlide(0)}
-            className="secondary-button px-8 py-4 text-base"
-          >
-            Try the Simulator
-          </a>
-        </div>
-        <div className="mt-12 text-xs font-semibold uppercase tracking-[0.3em] text-blue-200/50">
-          Use arrow keys to navigate
-        </div>
+  const slides = [
+    <section
+      key="cover"
+      aria-label="ZipAsset investor overview"
+      className="flex min-h-[60vh] flex-col items-center justify-center rounded-[20px] border border-white/10 bg-gradient-to-br from-[#0a1738] via-[#0f1d4a] to-[#0a1738] p-7 text-center shadow-[0_30px_80px_rgba(10,23,56,0.4)] sm:p-10 md:p-14"
+    >
+      <span className="eyebrow-chip mb-5 inline-flex border-white/20 bg-white/10 text-blue-200">
+        Investor overview
+      </span>
+      <h1 className="text-5xl font-black tracking-[-0.06em] text-white sm:text-6xl md:text-8xl">
+        ZipAsset
+      </h1>
+      <p className="mt-4 max-w-2xl text-xl font-semibold text-blue-200 sm:text-2xl">
+        EV infrastructure, made easier to evaluate.
+      </p>
+      <p className="mt-5 max-w-2xl text-sm leading-7 text-blue-100/75 sm:text-base">
+        Zipbolt Innovations&apos; digital platform concept for EV charging
+        opportunities and adjacent energy and mobility infrastructure.
+      </p>
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <button
+          type="button"
+          onClick={() => setCurrentSlide(1)}
+          className="primary-button px-7 py-3"
+        >
+          View the overview
+        </button>
+        <a href="#contact" className="secondary-button px-7 py-3">
+          Contact Zipbolt
+        </a>
       </div>
-    </Slide>,
+      <p className="mt-7 max-w-2xl text-xs leading-5 text-blue-200/50">
+        For discussion only. Not an offer, investment advice, or a representation
+        of live deployments or returns.
+      </p>
+    </section>,
 
-    <Slide key="opportunity">
-      <DeckSlide
-        title="The Opportunity"
-        subtitle="India&apos;s EV charging infrastructure is at an inflection point"
-        accent="brand"
-      >
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="space-y-4">
-            <p className="text-sm leading-7 text-blue-100/80">
-              India&apos;s EV market is projected to grow at over 40% CAGR through
-              2030, driven by government incentives, fleet electrification, and
-              rising fuel costs. Charging infrastructure is the critical backbone
-              and the bottleneck.
+    <DeckSlide
+      key="context"
+      title="The practical gap"
+      subtitle="EV infrastructure is more than hardware: projects need the right equipment, site, operating plan, and capital."
+      accent="cyan"
+    >
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card eyebrow="Project side" title="Match equipment to use">
+          A home charger, retail fast charger, highway hub, and fleet depot have
+          different power, site, and operating needs.
+        </Card>
+        <Card eyebrow="Investor side" title="See the project clearly">
+          Investors need understandable asset details, assumptions, risks, legal
+          terms, and reporting before evaluating an opportunity.
+        </Card>
+        <Card eyebrow="Platform role" title="Bring the information together">
+          Present infrastructure opportunities and scenario previews in one
+          digital experience.
+        </Card>
+      </div>
+    </DeckSlide>,
+
+    <DeckSlide
+      key="product"
+      title="A charger range built around real use cases"
+      subtitle="Seven charger classes on the site span everyday parking through high-power fleet and corridor use."
+      accent="green"
+    >
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {chargerClasses.map((charger) => (
+          <div
+            key={charger.power}
+            className="rounded-xl border border-white/10 bg-white/[0.05] p-4"
+          >
+            <p className="text-2xl font-black tracking-tight text-white">
+              {charger.power}
             </p>
-            <p className="text-sm leading-7 text-blue-100/80">
-              ZipAsset provides fractional access to high-utilization DC fast
-              charging assets deployed across retail, fleet, and highway
-              corridors. Every charger is backed by real site contracts,
-              deployed hardware, and transparent performance monitoring.
+            <p className="mt-1 text-sm leading-5 text-blue-100/65">
+              {charger.use}
             </p>
           </div>
-          <div className="space-y-4">
-            <div className="rounded-[16px] border border-white/10 bg-white/8 p-5 backdrop-blur-sm">
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-200/70">
-                Why Now
-              </div>
-              <ul className="mt-3 space-y-2 text-sm leading-7 text-blue-100/80">
-                <li>Government PLI schemes accelerating charger deployment</li>
-                <li>Rising EV adoption creating urgent demand at corridors</li>
-                <li>Limited institutional capital serving the infra gap</li>
-                <li>Digital marketplace enabling retail investor participation</li>
-              </ul>
-            </div>
-            <div className="rounded-[16px] border border-white/10 bg-white/8 p-5 backdrop-blur-sm">
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-200/70">
-                Asset Class
-              </div>
-              <p className="mt-3 text-sm leading-7 text-blue-100/80">
-                Physical EV charging infrastructure with long-term host-site
-                contracts, monitored utilization, and predictable cash flows.
-              </p>
-            </div>
-          </div>
-        </div>
-      </DeckSlide>
-    </Slide>,
-
-    <Slide key="market">
-      <DeckSlide
-        title="Market Overview"
-        subtitle="Key metrics from the ZipAsset charging network"
-        accent="cyan"
-      >
-        <StatGrid stats={marketStats} />
-        <div className="mt-8 grid gap-6 md:grid-cols-2">
-            <div className="rounded-[16px] border border-white/10 bg-white/8 p-5 backdrop-blur-sm">
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-200/70">
-                Network Reach
-              </div>
-              <div className="mt-3 text-3xl font-black tracking-[-0.04em] text-white">
-              7 Charger Classes
-              </div>
-              <div className="mt-2 text-sm text-blue-100/70">
-              From 6 kW AC residential to 240 kW flagship charging across retail,
-              fleet, and highway locations
-              </div>
-            </div>
-          <div className="rounded-[16px] border border-white/10 bg-white/8 p-5 backdrop-blur-sm">
-            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-200/70">
-              Deployment Model
-            </div>
-            <div className="mt-3 text-3xl font-black tracking-[-0.04em] text-white">
-              Site-Level Assets
-            </div>
-            <div className="mt-2 text-sm text-blue-100/70">
-              Each investment backs a specific charger at a specific site with
-              transparent utilization and return data
-            </div>
-          </div>
-        </div>
-      </DeckSlide>
-    </Slide>,
-
-    <Slide key="assets">
-      <DeckSlide
-        title="Asset Classes"
-        subtitle="Diversified infrastructure opportunities across charging, storage, and fleet segments"
-        accent="emerald"
-      >
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {segments.map((segment) => (
-            <div
-              key={segment.id}
-              className="rounded-[16px] border border-white/10 bg-white/8 p-4 backdrop-blur-sm"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <span className="text-lg font-black tracking-[-0.04em] text-white">
-                  {segment.power}
-                </span>
-                <RiskBadge level={segment.riskLevel} />
-              </div>
-              <div className="mt-2 text-sm font-semibold text-blue-100/80">
-                {segment.name}
-              </div>
-              <div className="mt-2 text-xs text-blue-200/60">{segment.site}</div>
-              <div className="mt-3 flex items-baseline gap-2">
-                <span className="text-xl font-black tracking-[-0.04em] text-white">
-                  {segment.yieldRate}%
-                </span>
-                <span className="text-xs font-semibold uppercase tracking-wider text-blue-200/60">
-                  APY
-                </span>
-              </div>
-              <div className="mt-2 text-xs text-blue-200/60">
-                {segment.lockDays}d lock
-              </div>
-            </div>
-          ))}
-        </div>
-      </DeckSlide>
-    </Slide>,
-
-    <Slide key="returns">
-      <DeckSlide
-        title="Return Profile"
-        subtitle="Projected returns across the asset spectrum"
-        accent="brand"
-      >
-        <div className="overflow-hidden rounded-[16px] border border-white/10 bg-white/8 backdrop-blur-sm">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-white/10 bg-white/5">
-                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-blue-200/70">
-                  Charger Class
-                </th>
-                <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-blue-200/70">
-                  Risk
-                </th>
-                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-blue-200/70">
-                  APY
-                </th>
-                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-blue-200/70">
-                  Min Ticket
-                </th>
-                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-blue-200/70">
-                  Max Ticket
-                </th>
-                <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-blue-200/70">
-                  Lock
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {segments.map((segment) => (
-                <tr
-                  key={segment.id}
-                  className="transition-colors hover:bg-white/5"
-                >
-                  <td className="whitespace-nowrap px-5 py-3 font-semibold text-white">
-                    {segment.name}
-                  </td>
-                  <td className="px-5 py-3">
-                    <RiskBadge level={segment.riskLevel} />
-                  </td>
-                  <td className="whitespace-nowrap px-5 py-3 text-right font-black text-white">
-                    {segment.yieldRate}%
-                  </td>
-                  <td className="whitespace-nowrap px-5 py-3 text-right text-blue-100/70">
-                    Rs {segment.minAmount.toLocaleString()}
-                  </td>
-                  <td className="whitespace-nowrap px-5 py-3 text-right text-blue-100/70">
-                    Rs {segment.maxAmount.toLocaleString()}
-                  </td>
-                  <td className="whitespace-nowrap px-5 py-3 text-right text-blue-100/70">
-                    {segment.lockDays}d
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="mt-6 rounded-[16px] border border-white/10 bg-white/8 p-5 backdrop-blur-sm">
-          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-200/70">
-            Note
-          </div>
-          <p className="mt-2 text-sm leading-7 text-blue-100/70">
-            Returns are modeled based on site utilization, power output, and
-            energy pricing. Actual returns may vary based on operational
-            performance, utilization rates, and market conditions. Past
-            projections are not guarantees of future results.
+        ))}
+        <div className="flex flex-col justify-center rounded-xl border border-blue-300/20 bg-blue-300/[0.06] p-4 sm:col-span-2 lg:col-span-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-200/70">
+            Beyond charging
+          </p>
+          <p className="mt-2 text-sm leading-6 text-blue-100/75">
+            The platform also presents battery storage and passenger- and
+            cargo-fleet themes.
           </p>
         </div>
-      </DeckSlide>
-    </Slide>,
+      </div>
+      <p className="mt-5 text-xs leading-5 text-blue-200/50">
+        This describes product and platform scope shown on the website; it does
+        not confirm installation, ownership, or commercial deployment of each
+        asset class.
+      </p>
+    </DeckSlide>,
 
-    <Slide key="risk">
-      <DeckSlide
-        title="Risk Framework"
-        subtitle="Every asset is categorized by its risk profile and return mechanics"
-        accent="amber"
-      >
-        <div className="grid gap-6 md:grid-cols-3">
-          {[
-            {
-              level: "Low",
-              color: "emerald",
-              examples: "6 kW AC, 12 kW AC, 30 kW Urban",
-              desc: "Steady demand from residential and workplace parking. Lower revenue per session but consistent utilization with minimal downtime.",
-            },
-            {
-              level: "Medium",
-              color: "amber",
-              examples: "60 kW Retail, 120 kW Highway, 180 kW Ultra-Fast",
-              desc: "Higher throughput and yield, with exposure to traffic variability, grid dependencies, and host-site commercial dynamics.",
-            },
-            {
-              level: "High",
-              color: "rose",
-              examples: "240 kW Flagship",
-              desc: "Flagship infrastructure with the highest yield potential. Sensitive to utilization assumptions, grid readiness, and site execution quality.",
-            },
-          ].map((risk) => (
-            <div
-              key={risk.level}
-              className="rounded-[16px] border border-white/10 bg-white/8 p-5 backdrop-blur-sm"
-            >
-              <RiskBadge level={risk.level} />
-              <div className="mt-4 text-sm font-bold text-white">
-                Examples
-              </div>
-              <div className="mt-1 text-sm text-blue-100/70">{risk.examples}</div>
-              <div className="mt-4 text-sm font-bold text-white">
-                Profile
-              </div>
-              <p className="mt-1 text-sm leading-7 text-blue-100/70">
-                {risk.desc}
-              </p>
-            </div>
-          ))}
-        </div>
-      </DeckSlide>
-    </Slide>,
+    <DeckSlide
+      key="experience"
+      title="What the investor experience does"
+      subtitle="A starting point for discovery and evaluation—not a live investment transaction system."
+      accent="blue"
+    >
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card eyebrow="Discover" title="Explore asset concepts">
+          Review charger opportunities and adjacent infrastructure themes
+          presented by ZipAsset.
+        </Card>
+        <Card eyebrow="Compare" title="Understand assumptions">
+          Use the on-site calculator to preview scenarios and consider how
+          amount, duration, and modeled rates affect an estimate.
+        </Card>
+        <Card eyebrow="Enquire" title="Continue the conversation">
+          Contact Zipbolt for information; assess any specific project only
+          against its own documents and terms.
+        </Card>
+      </div>
+      <div className="mt-5 rounded-xl border border-amber-300/20 bg-amber-300/[0.06] p-4 text-sm leading-6 text-amber-100/80">
+        The website is not connected to a live investment, KYC, payment,
+        asset-management, or portfolio system. Figures displayed in the UI are
+        illustrative, not verified performance or an available offer.
+      </div>
+    </DeckSlide>,
 
-    <Slide key="why">
-      <DeckSlide
-        title="Why ZipAsset"
-        subtitle="Platform differentiators that matter for infrastructure investors"
-        accent="brand"
-      >
-        <div className="grid gap-4 md:grid-cols-2">
-          {marketplaceHighlights.map((item) => (
-            <div
-              key={item}
-              className="rounded-[16px] border border-white/10 bg-white/8 p-5 backdrop-blur-sm"
-            >
-              <div className="flex items-start gap-3">
-                <div className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-[#2a56c6] text-sm font-bold text-white">
-                  &#10003;
-                </div>
-                <p className="text-sm leading-7 text-blue-100/80">{item}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="mt-6 rounded-[16px] border border-white/10 bg-white/8 p-5 backdrop-blur-sm">
-          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-200/70">
-            Platform Pillars
-          </div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-4">
-            {[
-              { label: "Asset-Backed", desc: "Every investment tied to physical hardware" },
-              { label: "Transparent", desc: "Site-level data and utilization visible" },
-              { label: "Flexible", desc: "Tickets from Rs 1.5K to Rs 2.2L+" },
-              { label: "Active", desc: "Managed infrastructure not passive speculation" },
-            ].map((pillar) => (
-              <div key={pillar.label} className="text-center">
-                <div className="text-sm font-bold text-white">
-                  {pillar.label}
-                </div>
-                <div className="mt-1 text-xs text-blue-100/60">
-                  {pillar.desc}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </DeckSlide>
-    </Slide>,
+    <DeckSlide
+      key="diligence"
+      title="What makes an opportunity investable"
+      subtitle="The next step is project-level evidence—not a headline APY."
+      accent="amber"
+    >
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {[
+          ["Asset & site", "What is being funded, where, and at what deployment stage?"],
+          ["Demand", "Who will use it, and what supports the utilization case?"],
+          ["Economics", "What are the capex, operating costs, fees, and downside cases?"],
+          ["Execution", "Who deploys and operates the asset, and under what agreements?"],
+          ["Investor terms", "What are the legal structure, rights, payout rules, and exit limits?"],
+          ["Reporting", "How will actual deployment and operating results be verified?"],
+        ].map(([title, detail]) => (
+          <Card key={title} title={title}>
+            {detail}
+          </Card>
+        ))}
+      </div>
+      <p className="mt-5 text-xs leading-5 text-blue-200/55">
+        Infrastructure investments carry demand, execution, operating,
+        counterparty, regulatory, and liquidity risks. Review offering-specific
+        disclosures and obtain independent advice as needed.
+      </p>
+    </DeckSlide>,
 
-    <Slide key="process">
-      <DeckSlide
-        title="How It Works"
-        subtitle="From discovery to deployment in three steps"
-        accent="cyan"
-      >
-        <div className="grid gap-6 md:grid-cols-3">
-          {steps.map((step, index) => (
-            <div key={step.title} className="text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#2a56c6] text-2xl font-black text-white">
-                {index + 1}
-              </div>
-              <h3 className="mt-4 text-lg font-bold text-white">
-                {step.title}
-              </h3>
-              <p className="mt-2 text-sm leading-7 text-blue-100/70">
-                {step.description}
-              </p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-8 rounded-[16px] border border-white/10 bg-white/8 p-5 backdrop-blur-sm">
-          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-200/70">
-            Investor Journey
-          </div>
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-sm text-blue-100/70">
-            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-blue-200">
-              Home
-            </span>
-            <span className="text-blue-200/40">&#8594;</span>
-            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-blue-200">
-              Marketplace
-            </span>
-            <span className="text-blue-200/40">&#8594;</span>
-            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-blue-200">
-              Simulator
-            </span>
-            <span className="text-blue-200/40">&#8594;</span>
-            <span className="rounded-full border border-white/12 bg-white/8 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-blue-200">
-              Deploy
-            </span>
-          </div>
-        </div>
-      </DeckSlide>
-    </Slide>,
-
-    <Slide key="contact">
-      <DeckSlide
-        title="Get In Touch"
-        subtitle="Ready to explore clean energy and mobility infrastructure as an asset class?"
-        accent="brand"
-      >
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="space-y-4">
-            <div className="rounded-[16px] border border-white/10 bg-white/8 p-5 backdrop-blur-sm">
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-200/70">
-                Contact
-              </div>
-              <div className="mt-3 space-y-2 text-sm text-blue-100/80">
-                <p>info@zip-bolt.com</p>
-                <p>ZipAsset, a product of Zipbolt Innovations Pvt Ltd</p>
-                <p>UG-006, Ground Floor</p>
-                <p>MGF Metropolis Mall, Mehrauli - Gurgaon Road</p>
-                <p>Gurugram, Haryana 122002, India</p>
-              </div>
-            </div>
-          </div>
-          <div className="space-y-4">
-            <div className="rounded-[16px] border border-white/10 bg-white/8 p-5 backdrop-blur-sm">
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-200/70">
-                Next Steps
-              </div>
-              <ul className="mt-3 space-y-2 text-sm text-blue-100/80">
-                <li>1. Explore charger opportunities on the Marketplace</li>
-                <li>2. Use the Investment Simulator to model returns</li>
-                <li>3. Review the Risk Disclosure and KYC / AML Policy</li>
-                <li>4. Sign in and deploy your allocation</li>
-              </ul>
-            </div>
-            <div className="rounded-[16px] border border-white/10 bg-white/8 p-5 backdrop-blur-sm">
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-200/70">
-                Legal Resources
-              </div>
-              <div className="mt-3 grid gap-2 text-sm">
-                <a href="/legal/terms-of-use.html" target="_blank" rel="noreferrer" className="transition text-blue-100/80 hover:text-white">Terms of Use</a>
-                <a href="/legal/privacy-policy.html" target="_blank" rel="noreferrer" className="transition text-blue-100/80 hover:text-white">Privacy Policy</a>
-                <a href="/legal/risk-disclosure.html" target="_blank" rel="noreferrer" className="transition text-blue-100/80 hover:text-white">Risk Disclosure</a>
-                <a href="/legal/kyc-aml-policy.html" target="_blank" rel="noreferrer" className="transition text-blue-100/80 hover:text-white">KYC / AML Policy</a>
-                <a href="/legal/investor-eligibility.html" target="_blank" rel="noreferrer" className="transition text-blue-100/80 hover:text-white">Investor Eligibility</a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <a href="#calculator" className="primary-button px-8 py-4 text-base">
-            Open Investment Simulator
-          </a>
-          <a href="#marketplace" className="secondary-button px-8 py-4 text-base">
-            View Opportunities
+    <DeckSlide
+      key="close"
+      title="Let’s talk infrastructure"
+      subtitle="ZipAsset is a product of Zipbolt Innovations Private Limited, based in Gurugram, India."
+      accent="blue"
+    >
+      <div className="grid gap-5 md:grid-cols-2">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-200/65">
+            Investors & partners
+          </p>
+          <p className="mt-3 text-sm leading-6 text-blue-100/75">
+            Discuss the platform, request project-specific information, and
+            evaluate the evidence and terms before making any decision.
+          </p>
+          <a
+            href="mailto:info@zip-bolt.com"
+            className="primary-button mt-5 inline-flex px-6 py-3"
+          >
+            info@zip-bolt.com
           </a>
         </div>
-      </DeckSlide>
-    </Slide>,
+        <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-200/65">
+            Important
+          </p>
+          <p className="mt-3 text-sm leading-6 text-blue-100/75">
+            This presentation is for discussion only. It is not investment
+            advice, an offer, or a solicitation. No return is assured. Any
+            offering would require its own documentation, eligibility checks,
+            and applicable approvals.
+          </p>
+          <a
+            href="/legal/risk-disclosure.html"
+            target="_blank"
+            rel="noreferrer"
+            className="mt-4 inline-block text-sm text-blue-200 underline decoration-white/25 underline-offset-4 hover:text-white"
+          >
+            Read the risk disclosure
+          </a>
+        </div>
+      </div>
+    </DeckSlide>,
   ];
+
+  const totalSlides = slides.length;
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      const target = event.target;
+      if (
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        target.isContentEditable ||
+        target.closest("a, button, input, select, textarea")
+      ) {
+        return;
+      }
+
+      if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+        setCurrentSlide((previous) => Math.min(previous + 1, totalSlides - 1));
+      }
+      if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+        setCurrentSlide((previous) => Math.max(previous - 1, 0));
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [totalSlides]);
 
   return (
     <main className="pb-12 pt-6 sm:pt-8">
       <div className="mx-auto w-[min(1480px,calc(100%-22px))] md:w-[min(1480px,calc(100%-32px))]">
-        <div className="sticky top-0 z-10 -mx-4 border-b border-white/10 bg-[rgba(10,23,56,0.92)] px-4 py-3 backdrop-blur-xl sm:mx-0 sm:rounded-none sm:border-none sm:p-4">
+        <div className="sticky top-0 z-10 -mx-4 border-b border-white/10 bg-[rgba(10,23,56,0.92)] px-4 py-3 backdrop-blur-xl sm:mx-0 sm:border-none sm:p-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-200/70">
-                Slide {currentSlide + 1} of {totalSlides}
-              </span>
-            </div>
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-200/70">
+              Slide {currentSlide + 1} of {totalSlides}
+            </span>
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => setCurrentSlide((prev) => Math.max(prev - 1, 0))}
+                onClick={() =>
+                  setCurrentSlide((previous) => Math.max(previous - 1, 0))
+                }
                 disabled={currentSlide === 0}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/12 bg-white/8 text-blue-100/80 transition hover:bg-white/12 hover:text-white disabled:opacity-30 disabled:hover:translate-y-0"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-blue-100/80 transition hover:bg-white/10 hover:text-white disabled:opacity-30"
                 aria-label="Previous slide"
               >
-                <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
-                  <path d="M12 5L7 10L12 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  className="h-4 w-4"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12 5L7 10L12 15"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </button>
               <button
                 type="button"
-                onClick={() => setCurrentSlide((prev) => Math.min(prev + 1, totalSlides - 1))}
+                onClick={() =>
+                  setCurrentSlide((previous) =>
+                    Math.min(previous + 1, totalSlides - 1),
+                  )
+                }
                 disabled={currentSlide === totalSlides - 1}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/12 bg-white/8 text-blue-100/80 transition hover:bg-white/12 hover:text-white disabled:opacity-30 disabled:hover:translate-y-0"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-blue-100/80 transition hover:bg-white/10 hover:text-white disabled:opacity-30"
                 aria-label="Next slide"
               >
-                <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
-                  <path d="M8 5L13 10L8 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <svg
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  className="h-4 w-4"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M8 5L13 10L8 15"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </button>
             </div>
           </div>
           <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/10">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-[#2a56c6] to-[#5f88f4] transition-all duration-500 ease-out"
+              className="h-full rounded-full bg-gradient-to-r from-[#2a56c6] to-[#5f88f4] transition-all duration-300"
               style={{ width: `${((currentSlide + 1) / totalSlides) * 100}%` }}
             />
           </div>
         </div>
 
         <div className="mt-6" key={currentSlide}>
-          {slideComponents[currentSlide]}
+          {slides[currentSlide]}
         </div>
 
-        <div className="mt-8 flex items-center justify-center gap-2">
-          {Array.from({ length: totalSlides }).map((_, i) => (
+        <nav
+          className="mt-7 flex items-center justify-center gap-2"
+          aria-label="Investor deck slides"
+        >
+          {slides.map((slide, index) => (
             <button
-              key={i}
+              key={slide.key}
               type="button"
-              onClick={() => setCurrentSlide(i)}
-              className={`h-2.5 rounded-full transition-all duration-300 ${
-                i === currentSlide
+              onClick={() => setCurrentSlide(index)}
+              className={`h-2.5 rounded-full transition-all ${
+                index === currentSlide
                   ? "w-8 bg-[#2a56c6]"
                   : "w-2.5 bg-white/20 hover:bg-white/40"
               }`}
-              aria-label={`Go to slide ${i + 1}`}
+              aria-label={`Go to slide ${index + 1}`}
+              aria-current={index === currentSlide ? "step" : undefined}
             />
           ))}
-        </div>
+        </nav>
       </div>
     </main>
   );

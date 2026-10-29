@@ -46,6 +46,12 @@ Install the contact-server dependencies:
 npm install --prefix server
 ```
 
+The shared contact handler also requires Nodemailer at the repository root for Vercel Functions:
+
+```bash
+npm install
+```
+
 Create a `.env.local` file at the repository root for optional Clerk support:
 
 ```env
@@ -54,7 +60,7 @@ VITE_CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key
 
 Without this variable, the site still renders; sign-in and sign-up controls are hidden and a browser-console warning explains that Clerk is disabled.
 
-Create `server/.env` for SMTP delivery:
+Create `server/.env` for SMTP delivery. The contact server loads this file automatically:
 
 ```env
 PORT=3001
@@ -62,10 +68,10 @@ SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 EMAIL_USER=your-smtp-username
 EMAIL_PASS=your-smtp-password-or-app-password
-RECIPIENT=info@example.com
 ```
 
-`EMAIL_USER` and `EMAIL_PASS` are required for successful delivery. `SMTP_HOST` defaults to `smtp.gmail.com`, `SMTP_PORT` defaults to `587`, and `RECIPIENT` defaults to `info@zip-bolt.com`.
+`EMAIL_USER` and `EMAIL_PASS` are required for successful delivery. `SMTP_HOST` defaults to `smtp.gmail.com`, `SMTP_PORT` defaults to `587`, and all charger and franchise enquiries are sent to `info@zip-bolt.com`.
+For Vercel, add `SMTP_HOST`, `SMTP_PORT`, `EMAIL_USER`, and `EMAIL_PASS` under **Project Settings → Environment Variables** for each deployment environment. Never add SMTP credentials to frontend (`VITE_`) variables or commit them.
 
 ## Run locally
 
@@ -85,20 +91,7 @@ The Vite app normally runs at `http://localhost:5173` and the API at `http://loc
 
 ### Local contact-form routing
 
-The frontend sends form submissions to the relative URL `/api/contact`. In production, route that path to the Express server (or serve both from one origin). For local development, configure a Vite proxy or use a same-origin reverse proxy; otherwise a browser served by Vite on port 5173 will request its own `/api/contact` path instead of port 3001.
-
-Example Vite proxy configuration:
-
-```js
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  server: {
-    proxy: {
-      "/api": "http://localhost:3001",
-    },
-  },
-});
-```
+The frontend sends form submissions to `/api/contact`. Locally, Vite proxies this path to the Express server on `http://localhost:3001`; run `npm run dev` and `npm run server:dev` in separate terminals. On Vercel, `api/contact.js` exposes the same shared handler as a serverless function, so no separate Express server or rewrite is needed.
 
 ## Available scripts
 
@@ -171,4 +164,3 @@ This repository contains a presentation and enquiry workflow, not a complete inv
 ## Company
 
 ZipAsset is presented as a product of **Zipbolt Innovations Private Limited**, Gurugram, India. Contact: [info@zip-bolt.com](mailto:info@zip-bolt.com).
-

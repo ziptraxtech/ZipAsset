@@ -1,170 +1,296 @@
-import { useState } from "react";
+import { Show, SignInButton } from "@clerk/react";
 import charger6kwImage from "../assets/charger-6kw-ac.png";
 import charger12kwImage from "../assets/charger-12kw-ac.png";
-import charger30kwImage from "../assets/charger-30kw.png";
+import { isClerkEnabled } from "../config/clerk";
 
-const plans = {
-  "6kw": {
-    label: "6 kW AC Charger",
-    image: charger6kwImage,
-    fit: "Homes, apartment parking and workplace bays",
-    description: "A compact AC charging option for locations where vehicles can park for longer periods.",
-    tags: ["AC charging", "Long-stay parking", "Compact setup"],
+const plans = [
+  {
+    id: "plan-a",
+    name: "Plan A",
+    network: "4 × 6 kW Network",
+    subtitle: "Decentralized 2W fleet micro-grid",
+    investment: "₹6.00 lakh",
+    chargerImages: [charger6kwImage],
+    hardware: "4 × 6 kW chargers · 8 guns",
+    deployment: "2–4 sites",
+    irr: "22.89%",
+    principalRecovery: "Targeted by Month 36",
+    totalPayout: "₹11,77,760",
+    annualHarvest: "₹2,88,880 / year",
+    harvestYield: "48.15%",
+    fit: "Two-wheeler delivery fleets operating across multiple local hubs.",
   },
-  "12kw": {
-    label: "12 kW AC Charger",
-    image: charger12kwImage,
-    fit: "Hotels, offices and destination parking",
-    description: "A higher-capacity AC option for destinations where drivers stay for a few hours.",
-    tags: ["AC charging", "Destination use", "Moderate dwell time"],
+  {
+    id: "plan-b",
+    name: "Plan B",
+    network: "24 kW Combo",
+    subtitle: "Mixed 2W and 3W cargo network",
+    investment: "₹5.00 lakh",
+    chargerImages: [charger6kwImage, charger12kwImage],
+    hardware: "2 × 6 kW + 1 × 12 kW · 6 guns",
+    deployment: "2 sites",
+    irr: "22.06%",
+    principalRecovery: "Targeted by Month 36",
+    totalPayout: "₹9,42,426",
+    annualHarvest: "₹2,21,213 / year",
+    harvestYield: "44.24%",
+    fit: "Mixed commercial fleets serving two- and three-wheelers.",
   },
-  "30kw": {
-    label: "30 kW DC Charger",
-    image: charger30kwImage,
-    fit: "Retail locations, cafes and urban commercial sites",
-    description: "An entry DC fast-charging option for commercial locations serving shorter visits.",
-    tags: ["DC fast charging", "Urban locations", "Shorter sessions"],
-  },
-};
+];
 
 const workflow = [
-  { number: "01", title: "Site & host connection", body: "Identify a suitable location and understand the host site's power and parking setup." },
-  { number: "02", title: "Dedicated sub-meter", body: "Measure charger consumption separately through a dedicated sub-meter connection." },
-  { number: "03", title: "Charger deployment", body: "Select a charger plan, confirm site readiness, and coordinate installation." },
-  { number: "04", title: "Monitor & maintain", body: "Track charger activity and coordinate ongoing service and support." },
+  "Franchise agreement",
+  "Capital escrow",
+  "30-day setup",
+  "Commissioning",
 ];
 
-const operatingFeatures = [
-  { icon: "◈", title: "Dedicated power tracking", body: "Sub-metering helps keep charger consumption visible." },
-  { icon: "⌁", title: "Remote monitoring", body: "Monitor charger status and identify service needs." },
-  { icon: "⚙", title: "Maintenance coordination", body: "A clear support path for charger servicing and upkeep." },
-  { icon: "◇", title: "Site-specific planning", body: "Review power, access and installation needs before deployment." },
-];
+function FranchisePlanDetails({ plan, onEnquire }) {
+  return (
+    <>
+      <dl className="grid grid-cols-2 gap-x-5 gap-y-4">
+        <div>
+          <dt className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+            Hardware
+          </dt>
+          <dd className="mt-1 text-sm font-semibold leading-5 text-slate-800">{plan.hardware}</dd>
+        </div>
+        <div>
+          <dt className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+            Deployment
+          </dt>
+          <dd className="mt-1 text-sm font-semibold leading-5 text-slate-800">{plan.deployment}</dd>
+        </div>
+        <div>
+          <dt className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+            Illustrative net IRR
+          </dt>
+          <dd className="mt-1 text-lg font-black text-blue-800">{plan.irr}</dd>
+        </div>
+        <div>
+          <dt className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+            Illustrative principal recovery
+          </dt>
+          <dd className="mt-1 text-sm font-semibold text-slate-800">{plan.principalRecovery}</dd>
+        </div>
+      </dl>
 
-function FranchiseSection() {
-  const [selectedPlan, setSelectedPlan] = useState("30kw");
-  const plan = plans[selectedPlan];
+      <div className="mt-4 grid grid-cols-2 divide-x divide-blue-100 rounded-2xl bg-blue-50/70 px-4 py-3.5">
+        <div className="pr-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-blue-700">
+            60-month net payout*
+          </p>
+          <p className="mt-1 text-lg font-black text-slate-950">{plan.totalPayout}</p>
+        </div>
+        <div className="pl-4">
+          <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-blue-700">
+            Years 4–5 annual payout*
+          </p>
+          <p className="mt-1 text-base font-black text-slate-950">{plan.annualHarvest}</p>
+          <p className="text-xs text-slate-500">{plan.harvestYield} of initial capital</p>
+        </div>
+      </div>
+
+      <p className="mt-4 text-sm leading-5 text-slate-600">
+        <span className="font-bold text-slate-800">Designed for: </span>{plan.fit}
+      </p>
+
+      <button
+        type="button"
+        onClick={() => onEnquire(plan)}
+        className="primary-button mt-5 w-full justify-center px-5 py-3 text-sm"
+      >
+        Enquire about {plan.name}
+      </button>
+    </>
+  );
+}
+
+function FranchisePlanHeader({ plan, index }) {
+  return (
+    <div className="flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex min-w-0 items-center gap-3">
+        <div className="flex h-[76px] w-[76px] shrink-0 items-center justify-center gap-0.5 overflow-hidden rounded-2xl bg-[linear-gradient(145deg,#eff6ff,#e7f2ff)]">
+          {plan.chargerImages.map((image, imageIndex) => (
+            <div
+              key={image}
+              className={`h-full overflow-hidden ${plan.chargerImages.length > 1 ? "w-1/2" : "w-full"}`}
+            >
+              <img
+                src={image}
+                alt=""
+                aria-hidden="true"
+                className="h-full w-full scale-[1.35] object-cover"
+                style={{ objectPosition: `${imageIndex === 1 ? "48%" : "center"} center` }}
+              />
+            </div>
+          ))}
+        </div>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="grid h-7 w-7 place-items-center rounded-lg bg-blue-50 text-xs font-black text-blue-700">
+              0{index + 1}
+            </span>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">
+              {plan.subtitle}
+            </p>
+          </div>
+          <h4 className="mt-3 text-xl font-black tracking-[-0.04em] text-slate-950 sm:text-2xl">
+            {plan.network}
+          </h4>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FranchisePlanAccess({ plan, onEnquire }) {
+  const planDetails = (
+    <div className="px-5 pb-5 pt-4 sm:px-6 sm:pb-6">
+      <div className="mb-4 flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+          Proposed capital
+        </p>
+        <p className="text-xl font-black tracking-tight text-slate-950">
+          {plan.investment}
+        </p>
+      </div>
+      <FranchisePlanDetails plan={plan} onEnquire={onEnquire} />
+    </div>
+  );
+
+  if (!isClerkEnabled) {
+    return (
+      <div className="relative flex-1">
+        <div aria-hidden="true" className="pointer-events-none select-none blur-[5px]">
+          {planDetails}
+        </div>
+        <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl border border-blue-100 bg-white/80 p-4 text-center backdrop-blur-sm">
+          <p className="text-base font-bold text-slate-900">Log in to access deployment options</p>
+          <p className="mt-1 max-w-xs text-sm leading-5 text-slate-600">
+            Account sign-in is currently unavailable. Please try again later.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <section id="franchise" className="mt-8 scroll-mt-28 overflow-hidden rounded-[28px] border border-[#17384a] bg-[#061923] text-white shadow-[0_24px_70px_rgba(7,18,47,0.2)] sm:mt-10 sm:rounded-[36px]">
-      <div className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(ellipse_at_82%_8%,rgba(21,185,143,0.2),transparent_38%),linear-gradient(120deg,#071c27,#0a2732_55%,#071923)] p-5 sm:p-8 lg:p-10">
-        <div className="absolute -right-12 -top-20 h-64 w-64 rounded-full border border-emerald-200/10" />
-        <div className="relative grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-emerald-300">ZipAsset Franchise Model</p>
-            <h2 className="mt-3 max-w-3xl text-3xl font-black leading-[1.03] tracking-[-0.045em] sm:text-4xl lg:text-5xl">
-              Build an EV charging site around your location
-            </h2>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base sm:leading-8">
-              Explore charger options for your property or business. Start with a site discussion, review the power and installation requirements, and plan the right setup for your location.
+    <div className="relative flex-1">
+      <Show when="signed-in">
+        {planDetails}
+      </Show>
+      <Show when="signed-out">
+        <div className="relative">
+          <div aria-hidden="true" className="pointer-events-none select-none blur-[5px]">
+            {planDetails}
+          </div>
+          <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl border border-blue-100 bg-white/80 p-4 text-center backdrop-blur-sm">
+            <p className="text-base font-bold text-slate-900">Log in to access deployment options</p>
+            <p className="mt-1 text-sm leading-5 text-slate-600">
+              Sign in to view the complete plan details and enquire.
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <a href="#contact" className="rounded-full bg-emerald-300 px-5 py-3 text-sm font-bold text-[#06202a] transition hover:bg-emerald-200">Discuss your site</a>
-              <a href="#franchise-plans" className="rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white transition hover:border-emerald-200/60 hover:bg-white/5">Explore charger plans</a>
-            </div>
-            <div className="mt-7 flex flex-wrap gap-2">
-              {["6 kW AC", "12 kW AC", "30 kW DC"].map((label) => (
-                <span key={label} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-slate-200">{label}</span>
+            <SignInButton mode="modal">
+              <button type="button" className="primary-button mt-3 justify-center px-5 py-2.5 text-sm">
+                Log in
+              </button>
+            </SignInButton>
+          </div>
+        </div>
+      </Show>
+    </div>
+  );
+}
+
+function FranchiseSection({ onEnquire }) {
+  return (
+    <section
+      id="franchise"
+      className="mt-8 scroll-mt-28 overflow-hidden rounded-[28px] border border-blue-100 bg-white shadow-[0_16px_48px_rgba(15,23,42,0.07)] sm:mt-10 sm:rounded-[32px]"
+    >
+      <header className="border-b border-blue-100 bg-[linear-gradient(115deg,#f7faff,#ffffff_65%,#f0f8ff)] px-5 py-7 sm:px-8 sm:py-9 lg:px-10">
+        <div className="mx-auto max-w-4xl text-center">
+          <p className="text-xs font-bold uppercase tracking-[0.24em] text-blue-700">
+            Zipbolt Micro-Utility Franchise
+          </p>
+          <h2 className="mt-3 text-3xl font-black leading-tight tracking-[-0.045em] text-slate-950 sm:text-4xl">
+            A ready-to-deploy charging network for commercial fleets
+          </h2>
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+            Compare two proposed micro-hub plans for 2W and 3W fleet charging, then talk to our
+            team about locations, deployment and franchise terms.
+          </p>
+          <a
+            href="#franchise-plans"
+            className="secondary-button mt-5 px-5 py-2.5 text-sm"
+          >
+            Compare plans <span aria-hidden="true">↓</span>
+          </a>
+        </div>
+      </header>
+
+      <div id="franchise-plans" className="scroll-mt-28 px-4 py-6 sm:px-7 sm:py-8 lg:px-9">
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-700">
+              Deployment options
+            </p>
+            <h3 className="mt-1 text-xl font-black tracking-[-0.035em] text-slate-950 sm:text-2xl">
+              Choose a network configuration
+            </h3>
+          </div>
+          <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600">
+            Proposed 60-month operating term
+          </span>
+        </div>
+
+        <div className="grid items-stretch gap-4 lg:grid-cols-2">
+          {plans.map((plan, index) => (
+            <article
+              key={plan.id}
+              className="flex flex-col overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_5px_20px_rgba(15,23,42,0.045)] transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-[0_14px_32px_rgba(42,86,198,0.1)]"
+            >
+              <div className="h-1 bg-gradient-to-r from-blue-800 via-blue-600 to-sky-400" />
+              <div className="px-5 pt-5 sm:px-6 sm:pt-6">
+                <FranchisePlanHeader plan={plan} index={index} />
+              </div>
+              <FranchisePlanAccess plan={plan} onEnquire={onEnquire} />
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-4 sm:px-5">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-600">
+              Proposed onboarding
+            </p>
+            <ol className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4">
+              {workflow.map((step, index) => (
+                <li key={step} className="flex items-center gap-2">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-blue-100 text-[10px] font-black text-blue-800">
+                    {index + 1}
+                  </span>
+                  <span className="text-xs font-semibold text-slate-700">{step}</span>
+                </li>
               ))}
-            </div>
+            </ol>
           </div>
-
-          <div id="franchise-plans" className="rounded-[24px] border border-white/10 bg-[#0a202b]/90 p-4 shadow-2xl sm:rounded-[30px] sm:p-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.22em] text-emerald-300">Entry Plan</p>
-                <p className="mt-1 text-sm text-slate-300">Choose a charger segment to explore</p>
-              </div>
-              <label className="sr-only" htmlFor="franchise-plan-select">Select charger plan</label>
-              <select
-                id="franchise-plan-select"
-                value={selectedPlan}
-                onChange={(event) => setSelectedPlan(event.target.value)}
-                className="min-w-[170px] rounded-xl border border-white/15 bg-[#102d38] px-4 py-3 text-sm font-bold text-white outline-none focus:border-emerald-300"
-              >
-                <option value="6kw">6 kW Charger</option>
-                <option value="12kw">12 kW Charger</option>
-                <option value="30kw">30 kW Charger</option>
-              </select>
-            </div>
-            <div className="mt-4 grid min-h-[190px] gap-4 rounded-[20px] border border-white/[0.07] bg-[linear-gradient(135deg,rgba(18,52,62,0.8),rgba(5,22,31,0.9))] p-4 sm:grid-cols-[0.72fr_1.28fr] sm:items-center sm:p-5">
-              <div className="flex h-36 items-center justify-center rounded-2xl bg-[#dce8e1] p-3">
-                <img src={plan.image} alt={plan.label} className="max-h-full max-w-full object-contain" />
-              </div>
-              <div>
-                <div className="text-[11px] font-bold uppercase tracking-[0.22em] text-emerald-300">Selected segment</div>
-                <h3 className="mt-2 text-2xl font-black tracking-[-0.04em]">{plan.label}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-300">{plan.description}</p>
-                <p className="mt-3 text-xs font-semibold text-slate-200"><span className="text-slate-400">Best suited for: </span>{plan.fit}</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {plan.tags.map((tag) => <span key={tag} className="rounded-full border border-emerald-200/15 bg-emerald-200/[0.06] px-2.5 py-1 text-[11px] font-semibold text-emerald-100">{tag}</span>)}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid gap-4 p-4 sm:gap-5 sm:p-6 lg:grid-cols-[1.12fr_0.88fr] lg:p-8">
-        <div className="rounded-[24px] border border-white/10 bg-[#081e28] p-5 sm:p-6">
-          <div className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-full bg-emerald-300/10 text-lg text-emerald-300">↗</span>
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-300">The workflow</p>
-              <h3 className="mt-1 text-xl font-black tracking-[-0.03em]">From host site to live charger</h3>
-            </div>
-          </div>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            {workflow.map((step) => (
-              <article key={step.number} className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-black tracking-[0.18em] text-emerald-300">{step.number}</span>
-                  <span className="h-px flex-1 bg-white/10" />
-                </div>
-                <h4 className="mt-3 text-sm font-bold text-white">{step.title}</h4>
-                <p className="mt-1.5 text-xs leading-5 text-slate-400">{step.body}</p>
-              </article>
-            ))}
-          </div>
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-200/10 bg-emerald-200/[0.04] px-4 py-3">
-            {["Host site", "Sub-meter", "Charger", "EV driver"].map((item, index) => (
-              <div key={item} className="flex items-center gap-2 text-xs font-semibold text-slate-200">
-                {index > 0 && <span className="hidden text-emerald-300 sm:inline">→</span>}
-                <span className="grid h-8 w-8 place-items-center rounded-full border border-emerald-200/20 bg-[#0a2832] text-emerald-200">{["⌂", "▤", "ϟ", "⌁"][index]}</span>
-                {item}
-              </div>
-            ))}
-          </div>
+          <button
+            type="button"
+            onClick={() => onEnquire(plans[0])}
+            className="secondary-button justify-center px-5 py-3 text-sm"
+          >
+            Talk to the franchise team
+          </button>
         </div>
 
-        <div className="rounded-[24px] border border-white/10 bg-[#081e28] p-5 sm:p-6">
-          <div className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-full bg-emerald-300/10 text-lg text-emerald-300">✓</span>
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-300">Operating support</p>
-              <h3 className="mt-1 text-xl font-black tracking-[-0.03em]">Designed for simpler operations</h3>
-            </div>
-          </div>
-          <div className="mt-5 space-y-2.5">
-            {operatingFeatures.map((feature) => (
-              <div key={feature.title} className="flex gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.025] p-3.5">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#102d38] text-lg text-emerald-300">{feature.icon}</span>
-                <div>
-                  <h4 className="text-sm font-bold text-white">{feature.title}</h4>
-                  <p className="mt-1 text-xs leading-5 text-slate-400">{feature.body}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-4 border-t border-white/10 bg-[#071720] px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-        <div>
-          <p className="text-lg font-black tracking-[-0.03em]">Have a location in mind?</p>
-          <p className="mt-1 text-sm text-slate-400">Start with a conversation about your site, power availability and charger requirements.</p>
-        </div>
-        <a href="#contact" className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-300 px-5 py-3 text-sm font-bold text-[#06202a] transition hover:bg-emerald-200">Talk to ZipAsset <span aria-hidden="true">→</span></a>
+        <p className="mt-4 text-xs leading-5 text-slate-500">
+          *Figures are indicative projections from the supplied presentation, not guaranteed
+          returns or a promise of principal recovery. Actual performance depends on utilization,
+          tariffs, uptime, site approvals, operating costs, taxes and final contract terms. Exit,
+          escrow or warranty arrangements apply only if confirmed in executed agreements. Review
+          independently and obtain professional advice before committing.
+        </p>
       </div>
     </section>
   );
