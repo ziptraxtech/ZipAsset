@@ -40,7 +40,7 @@ export const steps = [
 ];
 
 export const segmentShowcaseStats = [
-  { label: "Active Segments", value: "4" },
+  { label: "Active Segments", value: "3" },
   { label: "Autonomous monitoring", value: "24/7" },
   { label: "Response time", value: "<1s" },
   { label: "System uptime", value: "99.9%" },

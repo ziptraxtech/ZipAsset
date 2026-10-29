@@ -1,25 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import Header from "./components/Header";
-import InvestmentCalculator from "./components/InvestmentCalculator";
 import SegmentsGrid from "./components/SegmentsGrid";
 import Footer from "./components/Footer";
-import ChargerOpportunityPage from "./components/ChargerOpportunityPage";
 import InvestorDeckPage from "./components/InvestorDeckPage";
 import AboutUsPage from "./components/AboutUsPage";
 import ContactPage from "./components/ContactPage";
 import FAQPage from "./components/FAQPage";
-import SegmentsPage from "./components/SegmentsPage";
-import SegmentsShowcase from "./components/SegmentsShowcase";
 import BatteryStoragePage from "./components/BatteryStoragePage";
-import EvChargingPage from "./components/EvChargingPage";
 import EvPassengerFleetsPage from "./components/EvPassengerFleetsPage";
 import FranchiseSection from "./components/FranchiseSection";
 import {
-  marketStats,
-  marketplaceHighlights,
   segments,
-  steps,
   trustedCertifications,
 } from "./data/content";
 import startupIndiaLogo from "./assets/startup-india-certified.png";
@@ -38,52 +30,36 @@ const getRouteFromHash = () => {
   const hash = window.location.hash.replace(/^#/, "");
 
   if (hash.startsWith("charger/")) {
-    return { page: "charger", segmentId: hash.slice("charger/".length), anchor: null };
+    return { page: "home", segmentId: null, anchor: "marketplace" };
   }
   if (hash === "investordeck") return { page: "investordeck", segmentId: null, anchor: null };
-  if (hash === "segments") return { page: "segments", segmentId: null, anchor: null };
+  if (hash === "segments") return { page: "home", segmentId: null, anchor: "marketplace" };
   if (hash === "contact") return { page: "contact", segmentId: null, anchor: null };
   if (hash === "aboutus") return { page: "aboutus", segmentId: null, anchor: null };
   if (hash === "faq") return { page: "faq", segmentId: null, anchor: null };
   if (hash === "battery-storage") return { page: "battery-storage", segmentId: null, anchor: null };
-  if (hash === "ev-charging") return { page: "ev-charging", segmentId: null, anchor: null };
+  if (hash === "ev-charging") return { page: "home", segmentId: null, anchor: "marketplace" };
   if (hash === "ev-passenger-fleets") return { page: "ev-passenger-fleets", segmentId: null, anchor: null };
 
   return { page: "home", segmentId: null, anchor: hash || null };
 };
 
 function App() {
-  const [selectedSegmentId, setSelectedSegmentId] = useState("charger-60kw");
-  const [investmentAmount, setInvestmentAmount] = useState(15000);
   const [route, setRoute] = useState(() => getRouteFromHash());
+  const [enquirySegmentId, setEnquirySegmentId] = useState(null);
+  const [enquiryFranchisePlan, setEnquiryFranchisePlan] = useState(null);
   const [spotlightIndex, setSpotlightIndex] = useState(
     () => segments.findIndex((segment) => segment.id === "charger-60kw") ?? 0,
   );
   const [isSpotlightPaused, setIsSpotlightPaused] = useState(false);
-
-  const selectedSegment = useMemo(
-    () => segments.find((segment) => segment.id === selectedSegmentId) ?? segments[0],
-    [selectedSegmentId],
-  );
 
   const spotlightSegment = useMemo(
     () => segments[spotlightIndex] ?? segments[0],
     [spotlightIndex],
   );
 
-  const marketplaceSegments = useMemo(
-    () => segments.filter((segment) => segment.id !== "charger-180kw"),
-    [],
-  );
-
-  useEffect(() => {
-    if (
-      investmentAmount < selectedSegment.minAmount ||
-      investmentAmount > selectedSegment.maxAmount
-    ) {
-      setInvestmentAmount(selectedSegment.minAmount);
-    }
-  }, [investmentAmount, selectedSegment]);
+  const marketplaceSegments = segments;
+  const enquirySegment = segments.find((segment) => segment.id === enquirySegmentId);
 
   useEffect(() => {
     if (isSpotlightPaused) return undefined;
@@ -94,7 +70,11 @@ function App() {
   }, [isSpotlightPaused]);
 
   useEffect(() => {
-    const handleHashChange = () => setRoute(getRouteFromHash());
+    const handleHashChange = () => {
+      setEnquirySegmentId(null);
+      setEnquiryFranchisePlan(null);
+      setRoute(getRouteFromHash());
+    };
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
@@ -113,33 +93,15 @@ function App() {
     return () => window.clearTimeout(timeoutId);
   }, [route]);
 
-  const annualIncome = Math.round(investmentAmount * (selectedSegment.yieldRate / 100));
-  const monthlyIncome = Math.round(annualIncome / 12);
-
-  const investorReasons = [
-    marketplaceHighlights[0],
-    marketplaceHighlights[1],
-    "Target yields up to 14% APY across segments with risk-adjusted participation options.",
-    "Sustainable mobility exposure built around real deployment, recurring revenue, and disciplined payouts.",
-  ];
-
-  const handleOpenOpportunity = (segmentId) => {
-    setSelectedSegmentId(segmentId);
-    window.location.hash = `charger/${segmentId}`;
+  const handleEnquire = (segmentId) => {
+    setEnquiryFranchisePlan(null);
+    setEnquirySegmentId(segmentId);
   };
 
-  const handleBackToMarketplace = () => {
-    window.location.hash = "marketplace";
+  const handleFranchiseEnquire = (plan) => {
+    setEnquirySegmentId(null);
+    setEnquiryFranchisePlan(plan);
   };
-
-  const handleOpenSimulator = (segmentId) => {
-    setSelectedSegmentId(segmentId);
-    window.location.hash = "calculator";
-  };
-
-  const routeSegment = route.page === "charger"
-    ? segments.find((segment) => segment.id === route.segmentId) ?? selectedSegment
-    : null;
 
   return (
     <div className="app-shell text-slate-900">
@@ -149,16 +111,8 @@ function App() {
 
       <Header marketplaceSegments={marketplaceSegments} />
 
-      {route.page === "charger" && routeSegment ? (
-        <ChargerOpportunityPage
-          segment={routeSegment}
-          onBackToMarketplace={handleBackToMarketplace}
-          onOpenSimulator={() => handleOpenSimulator(routeSegment.id)}
-        />
-      ) : route.page === "investordeck" ? (
+      {route.page === "investordeck" ? (
         <InvestorDeckPage />
-      ) : route.page === "segments" ? (
-        <SegmentsPage />
       ) : route.page === "contact" ? (
         <ContactPage />
       ) : route.page === "aboutus" ? (
@@ -167,8 +121,6 @@ function App() {
         <FAQPage />
       ) : route.page === "battery-storage" ? (
         <BatteryStoragePage onBack={() => (window.location.hash = "segments")} />
-      ) : route.page === "ev-charging" ? (
-        <EvChargingPage onBack={() => (window.location.hash = "segments")} />
       ) : route.page === "ev-passenger-fleets" ? (
         <EvPassengerFleetsPage onBack={() => (window.location.hash = "segments")} />
       ) : (
@@ -183,28 +135,28 @@ function App() {
                 {/* Left copy */}
                 <div className="hero-copy space-y-5 sm:space-y-6">
                   <div className="eyebrow-chip eyebrow-chip-zip hero-kicker">
-                    Invest in the backbone of electric mobility
+                    EV charging equipment for real-world sites
                   </div>
 
                   <div className="space-y-3 sm:space-y-4">
                     <h1 className="hero-title max-w-4xl font-medium uppercase leading-[0.94] tracking-[-0.05em] text-slate-950"
                         style={{ fontSize: "clamp(2rem, 7.5vw, 5.5rem)" }}>
-                      <span className="hero-title-line">Invest in India&apos;s</span>
-                      <span className="hero-title-line">Next-Gen Energy</span>
-                      <span className="hero-title-line">&amp; Mobility</span>
-                      <span className="hero-title-line">Infrastructure</span>
+                      <span className="hero-title-line">Power your</span>
+                      <span className="hero-title-line">next charging</span>
+                      <span className="hero-title-line">location with</span>
+                      <span className="hero-title-line">ZipAsset</span>
                     </h1>
                     <p className="hero-subtitle max-w-2xl text-sm leading-7 text-slate-600 sm:text-base sm:leading-8 md:text-lg">
-                      Invest in clean energy and mobility infrastructure built for stable returns and long-term growth.
+                      Explore AC and DC charger models for homes, businesses, fleets and travel corridors. Tell us what you need and our team will help you find the right fit.
                     </p>
                   </div>
 
                   <div className="hero-cta-row flex flex-wrap gap-3">
-                    <a href="#calculator" className="primary-button hero-button-primary">
-                      Get started
+                    <a href="#marketplace" className="primary-button hero-button-primary">
+                      Explore chargers
                     </a>
-                    <a href="#segments" className="secondary-button hero-button-secondary">
-                      View opportunities
+                    <a href="#charger-inquiry" className="secondary-button hero-button-secondary">
+                      Talk to our team
                     </a>
                   </div>
                 </div>
@@ -221,10 +173,10 @@ function App() {
                   <div className="hero-showcase-front theme-shell">
                     <div className="flex items-center justify-between gap-3">
                       <span className="theme-card-title text-xs font-semibold uppercase tracking-[0.3em]">
-                        Network spotlight
+                        Product spotlight
                       </span>
                       <span className="theme-badge rounded-full px-3 py-1.5 text-xs font-semibold">
-                        Live pool
+                        For sale
                       </span>
                     </div>
 
@@ -247,16 +199,10 @@ function App() {
                         ))}
                       </div>
 
-                      <div className="mt-4 grid gap-2 grid-cols-2 sm:mt-6 sm:gap-3">
-                        <div className="theme-dark-metric rounded-[18px] px-3 py-3 text-slate-950 sm:rounded-[24px] sm:px-4 sm:py-4">
-                          <div className="text-xs font-semibold text-slate-500">Expected APY</div>
-                          <div className="mt-1 text-2xl font-black tracking-[-0.04em] sm:text-3xl">
-                            {spotlightSegment.yieldRate}%
-                          </div>
-                        </div>
+                      <div className="mt-4 grid gap-2 grid-cols-1 sm:mt-6 sm:gap-3">
                         <div className="theme-dark-sidecard rounded-[18px] px-3 py-3 sm:rounded-[24px] sm:px-4 sm:py-4">
                           <div className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-200">
-                            Site type
+                            Best suited for
                           </div>
                           <div className="mt-1 text-sm font-semibold text-white sm:text-base">
                             {spotlightSegment.site}
@@ -280,6 +226,13 @@ function App() {
                           </button>
                         ))}
                       </div>
+                      <button
+                        type="button"
+                        onClick={() => handleEnquire(spotlightSegment.id)}
+                        className="primary-button mt-5 w-full justify-center px-5 py-3 text-sm"
+                      >
+                        Enquire about this charger
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -288,7 +241,11 @@ function App() {
               {/* Stats + Trusted strip */}
               <div className="grid gap-3 sm:gap-4 xl:grid-cols-[1.35fr_0.65fr]">
                 <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3">
-                  {marketStats.map((stat, index) => (
+                  {[
+                    { label: "Charger models", value: `${segments.length}` },
+                    { label: "Power range", value: "6 kW–240 kW" },
+                    { label: "Charger types", value: "AC & DC" },
+                  ].map((stat, index) => (
                     <div
                       key={stat.label}
                       className="theme-stat-card glass-card glass-card-compact animate-rise"
@@ -311,12 +268,12 @@ function App() {
                   <div className="trusted-slider mt-3 sm:mt-4">
                     <div className="trusted-slider-track">
                       {[
-                        "Retail investors",
+                        "Homes & workplaces",
+                        "Retail & hospitality",
                         "Fleet operators",
-                        "Infrastructure partners",
-                        "Retail investors",
+                        "Homes & workplaces",
+                        "Retail & hospitality",
                         "Fleet operators",
-                        "Infrastructure partners",
                       ].map((item, index) => (
                         <span key={`${item}-${index}`} className="trusted-chip">
                           {item}
@@ -328,35 +285,32 @@ function App() {
               </div>
             </section>
 
-            {/* ── SEGMENTS SHOWCASE ─────────── */}
-            <SegmentsShowcase embedded />
-
-            {/* ── CALCULATOR + OVERVIEW ─────── */}
-            <section id="calculator" className="mt-6 grid gap-6 sm:mt-8 sm:gap-8 xl:items-stretch xl:grid-cols-[1fr_475px]">
+            {/* ── CHARGER RANGE ──────────────── */}
+            <section id="product-support" className="mt-6 grid gap-6 sm:mt-8 sm:gap-8 xl:items-stretch xl:grid-cols-[1fr_0.72fr]">
               <div className="glass-card flex h-full flex-col rounded-[22px] p-4 sm:rounded-[30px] sm:p-6">
                 <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-700 sm:text-sm">
-                  Opportunity overview
+                  Find the right charger
                 </p>
                 <h2 className="mt-2 text-xl font-black tracking-[-0.04em] text-slate-950 sm:text-2xl md:text-3xl">
-                  India&apos;s clean energy and mobility infrastructure is scaling across four key segments
+                  Charging options for different locations and needs
                 </h2>
                 <div className="mt-4 grid gap-3 sm:mt-6 sm:gap-4 md:grid-cols-2">
                   {[
                     {
-                      title: "EV DC Fast Charging",
-                      body: "High-power charging stations across retail, fleet, and highway corridors delivering rapid turnaround and premium revenue.",
+                      title: "AC destination charging",
+                      body: "6 kW and 12 kW options for homes, apartments, workplaces, hotels and other long-stay parking.",
                     },
                     {
-                      title: "Battery Energy Storage",
-                      body: "Strategic energy storage systems supporting grid stability, peak shaving, and long-duration energy management.",
+                      title: "Urban DC fast charging",
+                      body: "30 kW and 60 kW options for retail, offices, cafes and commercial locations with shorter stops.",
                     },
                     {
-                      title: "EV Passenger Fleets",
-                      body: "Intelligent charging and fleet optimization for passenger transport with adaptive scheduling and uptime maximization.",
+                      title: "Highway and travel charging",
+                      body: "120 kW and 180 kW options for travel corridors, service plazas, logistics parks and destination hubs.",
                     },
                     {
-                      title: "EV Cargo Fleets",
-                      body: "Commercial logistics infrastructure linking charging, route efficiency, and delivery schedules for operational optimization.",
+                      title: "High-throughput hubs",
+                      body: "240 kW flagship charging for major fleet depots and destination sites that need rapid turnaround.",
                     },
                   ].map((item) => (
                     <div key={item.title} className="metric-tile p-4 sm:p-5">
@@ -367,16 +321,20 @@ function App() {
                 </div>
               </div>
 
-              <InvestmentCalculator
-                segments={marketplaceSegments}
-                selectedSegmentId={selectedSegmentId}
-                investmentAmount={investmentAmount}
-                selectedSegment={selectedSegment}
-                annualIncome={annualIncome}
-                monthlyIncome={monthlyIncome}
-                onSegmentChange={setSelectedSegmentId}
-                onInvestmentChange={setInvestmentAmount}
-              />
+              <aside className="process-panel flex flex-col justify-center p-5 sm:p-7">
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-700 sm:text-sm">
+                  Need a recommendation?
+                </p>
+                <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-slate-950">
+                  Let&apos;s plan your charging setup
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-slate-600">
+                  Share your location, expected usage and project timeline. Our team can help you compare models and discuss site requirements.
+                </p>
+                <a href="#charger-inquiry" className="primary-button mt-6 w-full justify-center px-5 py-3 text-sm">
+                  Request a consultation
+                </a>
+              </aside>
             </section>
 
             {/* ── TRUST SECTION ──────────────── */}
@@ -416,7 +374,7 @@ function App() {
             </section>
 
             {/* ── MARKETPLACE ────────────────── */}
-            <FranchiseSection />
+            <FranchiseSection onEnquire={handleFranchiseEnquire} />
 
             <section id="marketplace" className="mt-8 sm:mt-10">
               <div className="mb-3 flex flex-wrap items-end justify-between gap-3 sm:mb-4">
@@ -425,14 +383,16 @@ function App() {
                     Marketplace
                   </p>
                   <h2 className="mt-1 text-xl font-black tracking-[-0.03em] text-slate-950 sm:text-2xl">
-                    Available charger opportunities
+                    Chargers for your site
                   </h2>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+                    Compare charger types, power levels and common applications, then send us an enquiry to discuss a purchase.
+                  </p>
                 </div>
               </div>
               <SegmentsGrid
                 segments={marketplaceSegments}
-                selectedSegmentId={selectedSegmentId}
-                onSelectSegment={handleOpenOpportunity}
+                onEnquire={handleEnquire}
               />
             </section>
 
@@ -440,13 +400,18 @@ function App() {
             <section className="mt-8 grid gap-4 sm:mt-10 sm:gap-6 lg:grid-cols-[0.88fr_1.12fr]">
               <div className="glass-card rounded-[22px] p-4 sm:rounded-[30px] sm:p-6">
                 <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-700 sm:text-sm">
-                  Why investors choose ZipAsset
+                  Why choose ZipAsset chargers
                 </p>
                 <h3 className="mt-2 text-xl font-black tracking-[-0.04em] text-slate-950 sm:text-2xl">
-                  Built for scalable clean energy and mobility assets
+                  Product guidance from enquiry to deployment
                 </h3>
                 <div className="mt-4 grid gap-3 sm:mt-6 sm:gap-4 sm:grid-cols-2">
-                  {investorReasons.map((item) => (
+                  {[
+                    "Choose from AC and DC charger models ranging from 6 kW to 240 kW.",
+                    "Compare use cases for homes, hospitality, retail, fleets and highway locations.",
+                    "Discuss your site, power availability and installation requirements with our team.",
+                    "Request product details and follow-up through your preferred contact channel.",
+                  ].map((item) => (
                     <div
                       key={item}
                       className="rounded-[18px] border border-white/80 bg-white/80 p-3 text-sm leading-7 text-slate-600 shadow-[0_12px_28px_rgba(15,23,42,0.05)] sm:rounded-[24px] sm:p-4"
@@ -459,10 +424,14 @@ function App() {
 
               <div className="process-panel p-4 sm:p-6">
                 <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-700 sm:text-sm">
-                  How it works
+                  How to get started
                 </p>
                 <div className="mt-4 grid gap-3 sm:mt-6 sm:gap-4 sm:grid-cols-2 md:grid-cols-3">
-                  {steps.map((step, index) => (
+                  {[
+                    { title: "Choose a model", description: "Browse charger power levels and the locations they are suited for." },
+                    { title: "Tell us about your site", description: "Share your location, use case, quantity and project timing." },
+                    { title: "Talk with our team", description: "We will follow up to discuss product details and next steps." },
+                  ].map((step, index) => (
                     <div key={step.title} className="process-step">
                       <div className="process-step-num">{index + 1}</div>
                       <h4 className="mt-2 text-base font-bold text-slate-950 sm:mt-3 sm:text-lg">{step.title}</h4>
@@ -475,6 +444,17 @@ function App() {
 
           </div>
         </main>
+      )}
+
+      {route.page === "home" && (enquirySegment || enquiryFranchisePlan) && (
+        <ContactPage
+          segment={enquirySegment}
+          franchisePlan={enquiryFranchisePlan}
+          onClose={() => {
+            setEnquirySegmentId(null);
+            setEnquiryFranchisePlan(null);
+          }}
+        />
       )}
 
       <Footer />

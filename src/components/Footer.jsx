@@ -79,46 +79,39 @@ function Footer() {
                 About Us
               </a>
               <a className="transition hover:text-white" href="#investordeck">
-                Investor Deck
+                Investor overview
               </a>
               <a className="transition hover:text-white" href="#marketplace">
-                Charger opportunities
+                Charger range
               </a>
-              <a className="transition hover:text-white" href="#segments">
-                Investment Segments
+              <a className="transition hover:text-white" href="#franchise">
+                Franchise plans
               </a>
               <a className="transition hover:text-white" href="#contact">
-                Get in touch
+                Contact Zipbolt
               </a>
             </div>
           </div>
 
           <div>
-            <h4 className="text-sm font-black uppercase tracking-[0.18em] text-white">Resources</h4>
+            <h4 className="text-sm font-black uppercase tracking-[0.18em] text-white">Quick links</h4>
             <div className="mt-4 grid gap-3 text-sm text-blue-100/75">
-              <button 
-                type="button"
-                className="transition hover:text-white text-left"
-                onClick={() => handleResourceLink("calculator")}
-              >
-                Returns preview
-              </button>
               <button 
                 type="button"
                 className="transition hover:text-white text-left"
                 onClick={() => handleResourceLink("marketplace")}
               >
-                Asset classes
+                Browse charger models
               </button>
               <button 
                 type="button"
                 className="transition hover:text-white text-left"
-                onClick={() => handleResourceLink("top")}
+                onClick={() => handleResourceLink("franchise")}
               >
-                Investor journey
+                Franchise enquiries
               </button>
               <a className="transition hover:text-white" href="#faq">
-                FAQ
+                Charger FAQs
               </a>
             </div>
           </div>
@@ -160,10 +153,10 @@ function Footer() {
                 Risk Disclosure
               </a>
               <a className="transition hover:text-white" href="/legal/kyc-aml-policy.html" target="_blank" rel="noreferrer">
-                KYC / AML Policy
+                KYC / AML Notice
               </a>
               <a className="transition hover:text-white" href="/legal/investor-eligibility.html" target="_blank" rel="noreferrer">
-                Investor Eligibility
+                Eligibility &amp; Availability
               </a>
             </div>
           </div>

@@ -4,7 +4,7 @@ import { isClerkEnabled } from "../config/clerk";
 import BrandLogo from "./BrandLogo";
 
 const navItems = [
-  { label: "Segments", href: "#segments" },
+  { label: "Charger Range", href: "#marketplace" },
   { label: "Franchise", href: "#franchise" },
   { label: "Investor Deck", href: "#investordeck" },
   { label: "Contact", href: "#contact" },
@@ -139,7 +139,7 @@ function Header({ marketplaceSegments }) {
         </a>
 
         <nav className="hidden items-center gap-6 text-sm font-semibold tracking-[0.08em] text-blue-100/80 lg:flex">
-          <a className="transition hover:text-white" href="#segments">Segments</a>
+          <a className="transition hover:text-white" href="#marketplace">Charger Range</a>
 
           <div ref={marketplaceRef} className="relative flex items-center gap-0.5">
             <span className="cursor-default">Marketplace</span>
@@ -180,14 +180,14 @@ function Header({ marketplaceSegments }) {
               <div className="w-[320px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_24px_60px_rgba(2,8,23,0.22)]">
                 <div className="border-b border-slate-200 bg-slate-50 px-4 py-3">
                   <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                    Charger Opportunities
+                    Charger Models
                   </div>
                 </div>
                 <div className="max-h-[360px] overflow-y-auto p-2">
                   {marketplaceSegments.map((segment) => (
                     <a
                       key={segment.id}
-                      href={`#charger/${segment.id}`}
+                      href="#marketplace"
                       onClick={handleNav}
                       className="block rounded-xl px-3 py-3 transition hover:bg-slate-100"
                     >
@@ -195,7 +195,7 @@ function Header({ marketplaceSegments }) {
                         {chargerMenuLabels[segment.id] ?? segment.power}
                       </div>
                       <div className="mt-1 text-xs font-medium text-slate-500">
-                        View opportunity
+                        View product
                       </div>
                     </a>
                   ))}
@@ -245,11 +245,11 @@ function Header({ marketplaceSegments }) {
         <div className="mx-auto w-[min(1180px,calc(100%-22px))] border-t border-white/10 py-6 md:w-[min(1180px,calc(100%-32px))]">
           <nav className="flex flex-col gap-2">
             <a
-              href="#segments"
+              href="#marketplace"
               onClick={handleNav}
               className="rounded-xl px-4 py-3 text-sm font-semibold tracking-[0.08em] text-blue-100/80 transition hover:bg-white/8 hover:text-white"
             >
-              Segments
+              Charger Range
             </a>
 
             <div className="rounded-xl border border-white/10 bg-white/4 px-4 py-3">
@@ -271,7 +271,7 @@ function Header({ marketplaceSegments }) {
                 {marketplaceSegments.map((segment) => (
                   <a
                     key={segment.id}
-                    href={`#charger/${segment.id}`}
+                    href="#marketplace"
                     onClick={handleNav}
                     className="rounded-lg px-3 py-2 text-sm font-medium text-blue-100/70 transition hover:bg-white/8 hover:text-white"
                   >
