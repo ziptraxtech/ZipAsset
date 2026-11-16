@@ -6,6 +6,7 @@ import BrandLogo from "./BrandLogo";
 const navItems = [
   { label: "Charger Range", href: "#marketplace" },
   { label: "Franchise", href: "#franchise" },
+  { label: "Insights", href: "https://insights.zipsureai.com/", external: true },
   { label: "Investor Deck", href: "#investordeck" },
   { label: "Contact", href: "#contact" },
   { label: "About Us", href: "#aboutus" },
@@ -205,7 +206,7 @@ function Header({ marketplaceSegments }) {
           </div>
 
           {navItems.slice(1).map((item) => (
-            <a key={item.label} className="transition hover:text-white" href={item.href}>
+            <a key={item.label} className="transition hover:text-white" href={item.href} target={item.external ? "_blank" : undefined} rel={item.external ? "noreferrer" : undefined}>
               {item.label}
             </a>
           ))}
@@ -286,6 +287,8 @@ function Header({ marketplaceSegments }) {
                 key={item.label}
                 href={item.href}
                 onClick={handleNav}
+                target={item.external ? "_blank" : undefined}
+                rel={item.external ? "noreferrer" : undefined}
                 className="rounded-xl px-4 py-3 text-sm font-semibold tracking-[0.08em] text-blue-100/80 transition hover:bg-white/8 hover:text-white"
               >
                 {item.label}

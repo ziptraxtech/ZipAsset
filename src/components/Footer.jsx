@@ -113,6 +113,9 @@ function Footer() {
               <a className="transition hover:text-white" href="#faq">
                 Charger FAQs
               </a>
+              <a className="transition hover:text-white" href="https://insights.zipsureai.com/" target="_blank" rel="noreferrer">
+                ZipSure Insights
+              </a>
             </div>
           </div>
 
