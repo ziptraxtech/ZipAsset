@@ -31,7 +31,7 @@ function Footer() {
     },
     {
       label: "Email",
-      href: "mailto:info@zip-bolt.com",
+      href: "mailto:sales@ziptrax.in",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" strokeWidth="1.8" />
@@ -50,21 +50,20 @@ function Footer() {
               <BrandLogo imgClassName="h-11 sm:h-12 md:h-14 drop-shadow-[0_10px_22px_rgba(34,211,238,0.14)]" />
               <div className="min-w-0">
                 <div className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-200/75">
-                  A Product Of Zipbolt Innovations Pvt Ltd
+                  A Product Of Ziptrax Cleantech Private Limited
                 </div>
               </div>
             </div>
 
             <div className="mt-5 max-w-md space-y-1 text-sm leading-7 text-blue-100/75">
               <p className="font-black uppercase tracking-[0.12em] text-white">
-                ZIPBOLT INNOVATIONS PRIVATE LIMITED
+                ZIPTRAX CLEANTECH PRIVATE LIMITED
               </p>
               <p className="font-semibold uppercase tracking-[0.08em] text-blue-100/85">
-                GSTIN : 06AABCZ8004D1ZM
+                CIN: U74999DL2016PTC309316
               </p>
-              <p>UG-006, Ground Floor</p>
-              <p>MGF Metropolis Mall, Mehrauli - Gurgaon Road</p>
-              <p>Gurugram, Haryana 122002, India</p>
+              <p>H No. 24, Gujar Gali, Mohalla, Chandan Hola</p>
+              <p>Chhatarpur, New Delhi, Delhi 110074</p>
             </div>
 
           </div>
@@ -88,7 +87,7 @@ function Footer() {
                 Franchise plans
               </a>
               <a className="transition hover:text-white" href="#contact">
-                Contact Zipbolt
+                Contact Ziptrax
               </a>
             </div>
           </div>
@@ -113,7 +112,7 @@ function Footer() {
               <a className="transition hover:text-white" href="#faq">
                 Charger FAQs
               </a>
-              <a className="transition hover:text-white" href="https://insights.zipsureai.com/" target="_blank" rel="noreferrer">
+              <a className="transition hover:text-white" href="#insights">
                 ZipSure Insights
               </a>
             </div>
@@ -122,8 +121,8 @@ function Footer() {
           <div>
             <h4 className="text-sm font-black uppercase tracking-[0.18em] text-white">Contact</h4>
             <div className="mt-4 grid gap-3 text-sm text-blue-100/75">
-              <a className="transition hover:text-white" href="mailto:info@zip-bolt.com">
-                info@zip-bolt.com
+              <a className="transition hover:text-white" href="mailto:sales@ziptrax.in">
+                sales@ziptrax.in
               </a>
               <div className="flex flex-wrap gap-3 pt-1">
                 {socialLinks.map((social) => (
@@ -166,7 +165,7 @@ function Footer() {
         </div>
 
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6 text-sm text-blue-100/60">
-          <p>&copy; 2026 ZipAsset, a product of Zipbolt Innovations Pvt Ltd.</p>
+          <p>&copy; 2026 ZipAsset, a product of Ziptrax Cleantech Private Limited.</p>
           <div className="flex flex-wrap gap-4">
             <a className="transition hover:text-white" href="#top">
               Back to top

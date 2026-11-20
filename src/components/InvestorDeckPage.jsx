@@ -6,7 +6,6 @@ const chargerClasses = [
   { power: "30 kW", use: "Urban retail & workplaces" },
   { power: "60 kW", use: "Commercial fast charging" },
   { power: "120 kW", use: "Highway & city corridors" },
-  { power: "180 kW", use: "Travel & logistics hubs" },
   { power: "240 kW", use: "Fleet depots & major hubs" },
 ];
 
@@ -84,7 +83,7 @@ function InvestorDeckPage() {
         EV infrastructure, made easier to evaluate.
       </p>
       <p className="mt-5 max-w-2xl text-sm leading-7 text-blue-100/75 sm:text-base">
-        Zipbolt Innovations&apos; digital platform concept for EV charging
+        Ziptrax Cleantech&apos;s digital platform concept for EV charging
         opportunities and adjacent energy and mobility infrastructure.
       </p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -221,7 +220,7 @@ function InvestorDeckPage() {
     <DeckSlide
       key="close"
       title="Let’s talk infrastructure"
-      subtitle="ZipAsset is a product of Zipbolt Innovations Private Limited, based in Gurugram, India."
+      subtitle="ZipAsset is a product of Ziptrax Cleantech Private Limited, based in New Delhi, India."
       accent="blue"
     >
       <div className="grid gap-5 md:grid-cols-2">
@@ -234,10 +233,10 @@ function InvestorDeckPage() {
             evaluate the evidence and terms before making any decision.
           </p>
           <a
-            href="mailto:info@zip-bolt.com"
+            href="mailto:sales@ziptrax.in"
             className="primary-button mt-5 inline-flex px-6 py-3"
           >
-            info@zip-bolt.com
+            sales@ziptrax.in
           </a>
         </div>
         <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-6">

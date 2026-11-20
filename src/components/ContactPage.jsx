@@ -26,6 +26,7 @@ function ContactPage({ segment, franchisePlan, onClose }) {
   });
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState("");
+  const [mailtoHref, setMailtoHref] = useState("");
 
   useEffect(() => {
     setFormData((previous) => ({
@@ -60,7 +61,7 @@ function ContactPage({ segment, franchisePlan, onClose }) {
     }));
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     setError("");
 
@@ -68,71 +69,50 @@ function ContactPage({ segment, franchisePlan, onClose }) {
       setError("Please provide an email address or phone number so our team can reach you.");
       return;
     }
-    if (formData.preferredContact === "Email" && !formData.email.trim()) {
+    if (franchisePlan && formData.preferredContact === "Email" && !formData.email.trim()) {
       setError("Please enter your email address or choose phone / WhatsApp as your preferred follow-up.");
       return;
     }
-    if (formData.preferredContact !== "Email" && !formData.phone.trim()) {
+    if (franchisePlan && formData.preferredContact !== "Email" && !formData.phone.trim()) {
       setError("Please enter your phone number for the selected follow-up method.");
       return;
     }
 
-    setStatus("submitting");
     const query = new URLSearchParams(window.location.search);
-    const enquirySubject = franchisePlan
+    const subject = franchisePlan
       ? `Franchise enquiry: ${formData.franchisePlan}`
       : `Charger sales enquiry: ${formData.charger}`;
-    const payload = {
-      ...formData,
-      subject: enquirySubject,
-      formType: franchisePlan ? "Franchise enquiry" : "Charger sales enquiry",
-      referrer: document.referrer,
-      utmSource: query.get("utm_source") || "",
-      utmMedium: query.get("utm_medium") || "",
-      utmCampaign: query.get("utm_campaign") || "",
-      utmContent: query.get("utm_content") || "",
-      utmTerm: query.get("utm_term") || "",
-    };
+    const fields = [
+      ["Full name", formData.name],
+      ["Email address", formData.email],
+      ["Phone / WhatsApp", formData.phone],
+      ["Company / organization", formData.company],
+      ["Charger of interest", formData.charger],
+      ["Franchise plan", formData.franchisePlan],
+      ["Intended use", formData.useCase],
+      ["Estimated quantity", formData.quantity],
+      ["Installation city / region", formData.deploymentLocation],
+      ["Purchase timeline", formData.timeline],
+      ["Preferred follow-up", formData.preferredContact],
+      ["How they heard about us", formData.discoveryChannel],
+      ["Project details or questions", formData.message],
+      ["Consent to be contacted", formData.consent ? "Yes" : "No"],
+      ["Form type", franchisePlan ? "Franchise enquiry" : "Charger sales enquiry"],
+      ["Referrer", document.referrer],
+      ["UTM source", query.get("utm_source")],
+      ["UTM medium", query.get("utm_medium")],
+      ["UTM campaign", query.get("utm_campaign")],
+      ["UTM content", query.get("utm_content")],
+      ["UTM term", query.get("utm_term")],
+    ];
+    const body = fields
+      .map(([label, value]) => `${label}: ${value?.trim() || "(not provided)"}`)
+      .join("\n");
+    const draftHref = `mailto:sales@ziptrax.in?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const responseText = await response.text();
-      let data = {};
-      if (responseText) {
-        try {
-          data = JSON.parse(responseText);
-        } catch {
-          throw new Error(
-            "The enquiry service returned an unexpected response. Please try again or contact our team directly.",
-          );
-        }
-      }
-
-      if (!responseText && response.ok) {
-        throw new Error(
-          "The enquiry service returned an empty response. Please try again or contact our team directly.",
-        );
-      }
-      if (!response.ok) {
-        throw new Error(
-          data.error || "We couldn't send your enquiry. Please try again.",
-        );
-      }
-
-      setStatus("success");
-    } catch (submitError) {
-      setStatus("error");
-      setError(
-        submitError instanceof Error
-          ? submitError.message
-          : "We couldn't send your enquiry. Please try again.",
-      );
-    }
+    setMailtoHref(draftHref);
+    setStatus("ready");
+    window.location.href = draftHref;
   };
 
   const inputClass =
@@ -198,25 +178,32 @@ function ContactPage({ segment, franchisePlan, onClose }) {
             </div>
           )}
           <p className="mt-5 text-xs leading-5 text-slate-500">
-            Your enquiry goes to our sales team. Use the preferred contact option to tell us how
-            you&apos;d like us to reach you.
+            {franchisePlan
+              ? "Your enquiry goes to our sales team. Choose how you’d like us to reach you."
+              : "Your enquiry goes to our sales team. We’ll follow up using the email or phone number you provide."}
           </p>
         </div>
 
-        {status === "success" ? (
+        {status === "ready" ? (
           <div
             className="flex flex-col justify-center rounded-3xl border border-emerald-200 bg-emerald-50 p-6 sm:p-8"
             role="status"
             aria-live="polite"
           >
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-100 text-xl font-bold text-emerald-700">
-              &#10003;
+              &#9993;
             </div>
-            <h3 className="mt-4 text-xl font-black text-emerald-950">Enquiry received</h3>
+            <h3 className="mt-4 text-xl font-black text-emerald-950">Email draft prepared</h3>
             <p className="mt-2 text-sm leading-7 text-emerald-800">
-              Thank you. Our team has received your enquiry and will follow up using your
-              preferred contact method.
+              Your email app should open with your enquiry addressed to sales@ziptrax.in.
+              Review the draft and press Send to contact our team.
             </p>
+            <a
+              href={mailtoHref}
+              className="primary-button mt-5 w-fit px-5 py-3"
+            >
+              Open email draft
+            </a>
             <button
               type="button"
               onClick={() => {
@@ -225,11 +212,12 @@ function ContactPage({ segment, franchisePlan, onClose }) {
                   charger: segment?.name ?? "",
                   franchisePlan: franchisePlan?.name ?? "",
                 });
+                setMailtoHref("");
                 setStatus("idle");
               }}
               className="mt-5 w-fit rounded-full border border-emerald-300 px-4 py-2 text-sm font-bold text-emerald-900 transition hover:bg-emerald-100"
             >
-              Send another enquiry
+              Edit enquiry
             </button>
           </div>
         ) : (
@@ -252,20 +240,22 @@ function ContactPage({ segment, franchisePlan, onClose }) {
                   placeholder="Your name"
                 />
               </div>
-              <div>
-                <label htmlFor="lead-company" className={labelClass}>Company / organization</label>
-                <input
-                  id="lead-company"
-                  name="company"
-                  type="text"
-                  autoComplete="organization"
-                  maxLength={160}
-                  value={formData.company}
-                  onChange={handleChange}
-                  className={inputClass}
-                  placeholder="Company name (optional)"
-                />
-              </div>
+              {franchisePlan && (
+                <div>
+                  <label htmlFor="lead-company" className={labelClass}>Company / organization</label>
+                  <input
+                    id="lead-company"
+                    name="company"
+                    type="text"
+                    autoComplete="organization"
+                    maxLength={160}
+                    value={formData.company}
+                    onChange={handleChange}
+                    className={inputClass}
+                    placeholder="Company name (optional)"
+                  />
+                </div>
+              )}
               <div>
                 <label htmlFor="lead-email" className={labelClass}>Email address</label>
                 <input
@@ -342,24 +332,26 @@ function ContactPage({ segment, franchisePlan, onClose }) {
                   </select>
                 </div>
               )}
-              <div>
-                <label htmlFor="lead-use-case" className={labelClass}>Intended use</label>
-                <select
-                  id="lead-use-case"
-                  name="useCase"
-                  value={formData.useCase}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option value="">Select a use case</option>
-                  <option value="Home or apartment">Home or apartment</option>
-                  <option value="Workplace or office">Workplace or office</option>
-                  <option value="Retail or hospitality">Retail or hospitality</option>
-                  <option value="Fleet or logistics">Fleet or logistics</option>
-                  <option value="Highway or travel hub">Highway or travel hub</option>
-                  <option value="Other / not sure">Other / not sure</option>
-                </select>
-              </div>
+              {franchisePlan && (
+                <div>
+                  <label htmlFor="lead-use-case" className={labelClass}>Intended use</label>
+                  <select
+                    id="lead-use-case"
+                    name="useCase"
+                    value={formData.useCase}
+                    onChange={handleChange}
+                    className={inputClass}
+                  >
+                    <option value="">Select a use case</option>
+                    <option value="Home or apartment">Home or apartment</option>
+                    <option value="Workplace or office">Workplace or office</option>
+                    <option value="Retail or hospitality">Retail or hospitality</option>
+                    <option value="Fleet or logistics">Fleet or logistics</option>
+                    <option value="Highway or travel hub">Highway or travel hub</option>
+                    <option value="Other / not sure">Other / not sure</option>
+                  </select>
+                </div>
+              )}
               <div>
                 <label htmlFor="lead-quantity" className={labelClass}>Estimated quantity</label>
                 <select
@@ -408,40 +400,44 @@ function ContactPage({ segment, franchisePlan, onClose }) {
                   placeholder="City, state"
                 />
               </div>
-              <div>
-                <label htmlFor="lead-contact-method" className={labelClass}>Preferred follow-up</label>
-                <select
-                  id="lead-contact-method"
-                  name="preferredContact"
-                  value={formData.preferredContact}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option value="Email">Email</option>
-                  <option value="Phone call">Phone call</option>
-                  <option value="WhatsApp">WhatsApp</option>
-                </select>
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="lead-source" className={labelClass}>How did you hear about us?</label>
-                <select
-                  id="lead-source"
-                  name="discoveryChannel"
-                  value={formData.discoveryChannel}
-                  onChange={handleChange}
-                  className={inputClass}
-                >
-                  <option value="">Select a source (optional)</option>
-                  <option value="Google or web search">Google or web search</option>
-                  <option value="LinkedIn">LinkedIn</option>
-                  <option value="Instagram">Instagram</option>
-                  <option value="Facebook">Facebook</option>
-                  <option value="YouTube">YouTube</option>
-                  <option value="Referral">Referral</option>
-                  <option value="Event or exhibition">Event or exhibition</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
+              {franchisePlan && (
+                <>
+                  <div>
+                    <label htmlFor="lead-contact-method" className={labelClass}>Preferred follow-up</label>
+                    <select
+                      id="lead-contact-method"
+                      name="preferredContact"
+                      value={formData.preferredContact}
+                      onChange={handleChange}
+                      className={inputClass}
+                    >
+                      <option value="Email">Email</option>
+                      <option value="Phone call">Phone call</option>
+                      <option value="WhatsApp">WhatsApp</option>
+                    </select>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label htmlFor="lead-source" className={labelClass}>How did you hear about us?</label>
+                    <select
+                      id="lead-source"
+                      name="discoveryChannel"
+                      value={formData.discoveryChannel}
+                      onChange={handleChange}
+                      className={inputClass}
+                    >
+                      <option value="">Select a source (optional)</option>
+                      <option value="Google or web search">Google or web search</option>
+                      <option value="LinkedIn">LinkedIn</option>
+                      <option value="Instagram">Instagram</option>
+                      <option value="Facebook">Facebook</option>
+                      <option value="YouTube">YouTube</option>
+                      <option value="Referral">Referral</option>
+                      <option value="Event or exhibition">Event or exhibition</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                </>
+              )}
               <div className="sm:col-span-2">
                 <label htmlFor="lead-message" className={labelClass}>Project details or questions</label>
                 <textarea
@@ -492,14 +488,9 @@ function ContactPage({ segment, franchisePlan, onClose }) {
 
             <button
               type="submit"
-              disabled={status === "submitting"}
-              className="primary-button mt-5 w-full justify-center px-6 py-3.5 text-sm disabled:cursor-wait disabled:opacity-60"
+              className="primary-button mt-5 w-full justify-center px-6 py-3.5 text-sm"
             >
-              {status === "submitting"
-                ? "Sending enquiry..."
-                : franchisePlan
-                  ? "Send franchise enquiry"
-                  : "Send charger enquiry"}
+              Continue
             </button>
             <p className="mt-3 text-center text-xs text-slate-500">
               We&apos;ll only use these details to respond to your enquiry.

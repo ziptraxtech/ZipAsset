@@ -1,6 +1,6 @@
 # ZipAsset
 
-ZipAsset is a responsive web experience for Zipbolt Innovations' clean-energy and electric-mobility investment platform. It presents asset-backed EV infrastructure opportunities, lets visitors explore modeled return scenarios, and provides a contact form for investment and partnership enquiries.
+ZipAsset is a responsive web experience for Ziptrax Cleantech Private Limited's clean-energy and electric-mobility platform. It presents EV charging products and infrastructure opportunities, and provides contact forms for sales and partnership enquiries.
 
 > **Important:** Return, APY, risk, TVL, and investment figures shown in the UI are illustrative content currently stored in the frontend. They are not connected to a live investment, KYC, payment, asset-management, or portfolio system.
 
@@ -11,7 +11,8 @@ ZipAsset is a responsive web experience for Zipbolt Innovations' clean-energy an
 - Dedicated investment-segment views for battery storage, EV fast charging, and EV passenger fleets
 - Investor deck, About, FAQ, and contact pages
 - Optional Clerk-powered sign-in/sign-up controls
-- Express contact endpoint that validates submissions and emails them through SMTP
+- Contact form that prepares a complete email draft in the visitor's default email app
+- Optional Express contact endpoint for integrations that submit enquiries through the API
 - Static legal pages for terms, privacy, risk disclosure, KYC/AML, and investor eligibility
 - Vercel Analytics integration
 
@@ -29,7 +30,7 @@ ZipAsset is a responsive web experience for Zipbolt Innovations' clean-energy an
 
 - Node.js 18 or later
 - npm
-- An SMTP account if you want contact-form delivery
+- An SMTP account if you want to use the optional contact API
 - A Clerk publishable key if you want authentication controls enabled
 
 ## Local setup
@@ -60,7 +61,7 @@ VITE_CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key
 
 Without this variable, the site still renders; sign-in and sign-up controls are hidden and a browser-console warning explains that Clerk is disabled.
 
-Create `server/.env` for SMTP delivery. The contact server loads this file automatically:
+To use the optional SMTP-backed contact API, create `server/.env`. The contact server loads this file automatically:
 
 ```env
 PORT=3001
@@ -70,7 +71,7 @@ EMAIL_USER=your-smtp-username
 EMAIL_PASS=your-smtp-password-or-app-password
 ```
 
-`EMAIL_USER` and `EMAIL_PASS` are required for successful delivery. `SMTP_HOST` defaults to `smtp.gmail.com`, `SMTP_PORT` defaults to `587`, and all charger and franchise enquiries are sent to `info@zip-bolt.com`.
+The website's contact form opens an email draft addressed to `sales@ziptrax.in`; the visitor must send it from their email app. For the optional API, `EMAIL_USER` and `EMAIL_PASS` are required for delivery. `SMTP_HOST` defaults to `smtp.gmail.com`, and `SMTP_PORT` defaults to `587`.
 For Vercel, add `SMTP_HOST`, `SMTP_PORT`, `EMAIL_USER`, and `EMAIL_PASS` under **Project Settings → Environment Variables** for each deployment environment. Never add SMTP credentials to frontend (`VITE_`) variables or commit them.
 
 ## Run locally
@@ -87,11 +88,11 @@ In another terminal, start the contact server:
 npm run server:dev
 ```
 
-The Vite app normally runs at `http://localhost:5173` and the API at `http://localhost:3001`.
+The Vite app normally runs at `http://localhost:5173`. The optional API runs at `http://localhost:3001`.
 
 ### Local contact-form routing
 
-The frontend sends form submissions to `/api/contact`. Locally, Vite proxies this path to the Express server on `http://localhost:3001`; run `npm run dev` and `npm run server:dev` in separate terminals. On Vercel, `api/contact.js` exposes the same shared handler as a serverless function, so no separate Express server or rewrite is needed.
+The website form uses a `mailto:` link and does not require the API server. The optional `/api/contact` endpoint is available separately: locally, run `npm run dev` and `npm run server:dev` in separate terminals; on Vercel, `api/contact.js` exposes the shared handler as a serverless function.
 
 ## Available scripts
 
@@ -155,7 +156,7 @@ Build the frontend with:
 npm run build
 ```
 
-Deploy the generated `dist/` directory to your static host and deploy the Express service where it can receive `/api/contact` requests. Configure your host or reverse proxy to forward `/api/*` to the Express service. Set frontend and server environment variables in the appropriate deployment environment rather than committing them.
+Deploy the generated `dist/` directory to your static host. The website contact form uses the visitor's email app; deploy the optional Express service or Vercel function only if API-based enquiry delivery is needed. Set server environment variables in the appropriate deployment environment rather than committing them.
 
 ## Legal and risk notice
 
@@ -163,4 +164,4 @@ This repository contains a presentation and enquiry workflow, not a complete inv
 
 ## Company
 
-ZipAsset is presented as a product of **Zipbolt Innovations Private Limited**, Gurugram, India. Contact: [info@zip-bolt.com](mailto:info@zip-bolt.com).
+ZipAsset is presented as a product of **Ziptrax Cleantech Private Limited**, New Delhi, India (CIN: U74999DL2016PTC309316). Address: H No. 24, Gujar Gali, Mohalla, Chandan Hola, Chhatarpur, New Delhi, Delhi 110074. Contact: [sales@ziptrax.in](mailto:sales@ziptrax.in).

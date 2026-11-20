@@ -13,7 +13,7 @@
   - server/index.js - /api/contact POST endpoint
   - server/package.json - Server dependencies
   - server/.env.example - Environment variable template
-  - Sends styled HTML email to info@zip-bolt.com
+  - Sends styled HTML email to sales@ziptrax.in
   - Validates required fields, returns JSON success/error
 - [x] Added server and server:dev scripts to root package.json
 - [x] Added server/.env to .gitignore
@@ -45,4 +45,4 @@
 - InvestorDeckPage.jsx (PPT-style 9-slide investor deck)
 - Header.jsx: Investor Deck link added, Request Quote replaced with Login/Sign Up, About Us -> #aboutus, Contact -> #contact
 - Footer.jsx: Platform section updated (Added About Us, Get in touch), Added investor deck teaser (removed), Resources restored
-- server/: Full Node.js backend with Express + Nodemailer for contact form emails to info@zip-bolt.com
+- server/: Full Node.js backend with Express + Nodemailer for contact form emails to sales@ziptrax.in

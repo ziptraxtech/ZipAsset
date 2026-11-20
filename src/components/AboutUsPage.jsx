@@ -31,7 +31,7 @@ function AboutUsPage() {
             Charging for homes, workplaces, fleets and public sites.
           </h1>
           <p className="mt-5 max-w-3xl text-sm leading-7 text-blue-100/75 sm:text-base sm:leading-8">
-            ZipAsset is a product of Zipbolt Innovations Private Limited. We
+            ZipAsset is a product of Ziptrax Cleantech Private Limited. We
             present AC and DC charger models for homes, businesses, fleets, and
             travel locations, and help prospective customers start a
             product-specific conversation with our team.
@@ -128,18 +128,20 @@ function AboutUsPage() {
           <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-200/70">
-                Zipbolt Innovations Private Limited
+                Ziptrax Cleantech Private Limited
               </p>
               <p className="mt-3 text-sm leading-7 text-blue-100/75">
-                UG-006, Ground Floor, MGF Metropolis Mall
+                CIN: U74999DL2016PTC309316
                 <br />
-                Mehrauli–Gurgaon Road, Gurugram, Haryana 122002, India
+                H No. 24, Gujar Gali, Mohalla, Chandan Hola, Chhatarpur
+                <br />
+                New Delhi, Delhi 110074
                 <br />
                 <a
-                  href="mailto:info@zip-bolt.com"
+                  href="mailto:sales@ziptrax.in"
                   className="font-semibold text-white underline decoration-white/25 underline-offset-4 hover:text-blue-200"
                 >
-                  info@zip-bolt.com
+                  sales@ziptrax.in
                 </a>
               </p>
             </div>

@@ -43,7 +43,7 @@ export async function handleContact(req, res) {
   if (fields.preferredContact === "Email" && !fields.email) {
     return res.status(400).json({ error: "An email address is required for email follow-up." });
   }
-  if (fields.preferredContact !== "Email" && !fields.phone) {
+  if (fields.preferredContact && fields.preferredContact !== "Email" && !fields.phone) {
     return res.status(400).json({ error: "A phone number is required for phone or WhatsApp follow-up." });
   }
 
@@ -54,7 +54,7 @@ export async function handleContact(req, res) {
 
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     return res.status(503).json({
-      error: "Email delivery is not configured. Please contact us directly at info@zip-bolt.com.",
+      error: "Email delivery is not configured. Please contact us directly at sales@ziptrax.in.",
     });
   }
 
@@ -100,7 +100,7 @@ export async function handleContact(req, res) {
   });
   const mailOptions = {
     from: process.env.EMAIL_USER,
-    to: "info@zip-bolt.com",
+    to: "sales@ziptrax.in",
     ...(fields.email ? { replyTo: fields.email } : {}),
     subject: fields.franchisePlan ? "New micro-utility franchise enquiry" : "New charger sales enquiry",
     html: `

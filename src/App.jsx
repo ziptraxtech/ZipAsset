@@ -9,6 +9,7 @@ import ContactPage from "./components/ContactPage";
 import FAQPage from "./components/FAQPage";
 import BatteryStoragePage from "./components/BatteryStoragePage";
 import EvPassengerFleetsPage from "./components/EvPassengerFleetsPage";
+import InsightsPage from "./components/InsightsPage";
 import FranchiseSection from "./components/FranchiseSection";
 import {
   segments,
@@ -32,6 +33,7 @@ const getRouteFromHash = () => {
   if (hash.startsWith("charger/")) {
     return { page: "home", segmentId: null, anchor: "marketplace" };
   }
+  if (hash === "insights") return { page: "insights", segmentId: null, anchor: null };
   if (hash === "investordeck") return { page: "investordeck", segmentId: null, anchor: null };
   if (hash === "segments") return { page: "home", segmentId: null, anchor: "marketplace" };
   if (hash === "contact") return { page: "contact", segmentId: null, anchor: null };
@@ -80,7 +82,11 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (route.page !== "home" || !route.anchor) return undefined;
+    if (route.page !== "home") {
+      window.scrollTo({ top: 0 });
+      return undefined;
+    }
+    if (!route.anchor) return undefined;
     const scrollToAnchor = () => {
       if (route.anchor === "top") {
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -113,6 +119,8 @@ function App() {
 
       {route.page === "investordeck" ? (
         <InvestorDeckPage />
+      ) : route.page === "insights" ? (
+        <InsightsPage />
       ) : route.page === "contact" ? (
         <ContactPage />
       ) : route.page === "aboutus" ? (
@@ -155,7 +163,7 @@ function App() {
                     <a href="#marketplace" className="primary-button hero-button-primary">
                       Explore chargers
                     </a>
-                    <a href="#charger-inquiry" className="secondary-button hero-button-secondary">
+                    <a href="#contact" className="secondary-button hero-button-secondary">
                       Talk to our team
                     </a>
                   </div>
@@ -306,7 +314,7 @@ function App() {
                     },
                     {
                       title: "Highway and travel charging",
-                      body: "120 kW and 180 kW options for travel corridors, service plazas, logistics parks and destination hubs.",
+                      body: "120 kW options for travel corridors, service plazas and logistics parks.",
                     },
                     {
                       title: "High-throughput hubs",
@@ -331,7 +339,7 @@ function App() {
                 <p className="mt-3 text-sm leading-7 text-slate-600">
                   Share your location, expected usage and project timeline. Our team can help you compare models and discuss site requirements.
                 </p>
-                <a href="#charger-inquiry" className="primary-button mt-6 w-full justify-center px-5 py-3 text-sm">
+                <a href="#contact" className="primary-button mt-6 w-full justify-center px-5 py-3 text-sm">
                   Request a consultation
                 </a>
               </aside>

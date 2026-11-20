@@ -4,9 +4,8 @@ import { isClerkEnabled } from "../config/clerk";
 import BrandLogo from "./BrandLogo";
 
 const navItems = [
-  { label: "Charger Range", href: "#marketplace" },
-  { label: "Franchise", href: "#franchise" },
-  { label: "Insights", href: "https://insights.zipsureai.com/", external: true },
+  { label: "Segments", href: "#segments" },
+  { label: "Insights", href: "#insights" },
   { label: "Investor Deck", href: "#investordeck" },
   { label: "Contact", href: "#contact" },
   { label: "About Us", href: "#aboutus" },
@@ -18,7 +17,6 @@ const chargerMenuLabels = {
   "charger-30kw": "30 kW Urban",
   "charger-60kw": "60 kW Retail",
   "charger-120kw": "120 kW Highway",
-  "charger-180kw": "180 kW Travel",
   "charger-240kw": "240 kW Fleet",
 };
 
@@ -140,7 +138,7 @@ function Header({ marketplaceSegments }) {
         </a>
 
         <nav className="hidden items-center gap-6 text-sm font-semibold tracking-[0.08em] text-blue-100/80 lg:flex">
-          <a className="transition hover:text-white" href="#marketplace">Charger Range</a>
+          <a className="transition hover:text-white" href={navItems[0].href}>{navItems[0].label}</a>
 
           <div ref={marketplaceRef} className="relative flex items-center gap-0.5">
             <span className="cursor-default">Marketplace</span>
@@ -246,11 +244,11 @@ function Header({ marketplaceSegments }) {
         <div className="mx-auto w-[min(1180px,calc(100%-22px))] border-t border-white/10 py-6 md:w-[min(1180px,calc(100%-32px))]">
           <nav className="flex flex-col gap-2">
             <a
-              href="#marketplace"
+              href={navItems[0].href}
               onClick={handleNav}
               className="rounded-xl px-4 py-3 text-sm font-semibold tracking-[0.08em] text-blue-100/80 transition hover:bg-white/8 hover:text-white"
             >
-              Charger Range
+              {navItems[0].label}
             </a>
 
             <div className="rounded-xl border border-white/10 bg-white/4 px-4 py-3">

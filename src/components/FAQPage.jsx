@@ -3,11 +3,11 @@ import { useState } from "react";
 const faqs = [
   {
     q: "What is ZipAsset?",
-    a: "ZipAsset is a product of Zipbolt Innovations Private Limited. The website presents EV charger models and provides a way to send product or franchise enquiries to the team.",
+    a: "ZipAsset is a product of Ziptrax Cleantech Private Limited. The website presents EV charger models and provides a way to send product or franchise enquiries to the team.",
   },
   {
     q: "What charger models are shown?",
-    a: "The product range shown includes 6 kW, 12 kW, 30 kW, 60 kW, 120 kW, 180 kW, and 240 kW DC chargers. Specifications, compatibility, and availability should be confirmed for your project.",
+    a: "The product range shown includes 6 kW, 12 kW, 30 kW, 60 kW, 120 kW, and 240 kW DC chargers. Specifications, compatibility, and availability should be confirmed for your project.",
   },
   {
     q: "How do I choose the right charger?",
@@ -34,8 +34,8 @@ const faqs = [
     a: "No live investment transaction is available through this website. The site is not connected to investment onboarding, KYC, payments, asset management, or portfolio reporting. Do not treat illustrative figures or investor overview material as an offer or a promise of returns.",
   },
   {
-    q: "How do I contact Zipbolt?",
-    a: "Use the Contact page to submit a charger or franchise enquiry, or email info@zip-bolt.com. Please provide at least one contact method so the team can respond.",
+    q: "How do I contact Ziptrax?",
+    a: "Use the Contact page to submit a charger or franchise enquiry, or email sales@ziptrax.in. Please provide at least one contact method so the team can respond.",
   },
 ];
 
@@ -111,10 +111,10 @@ function FAQPage() {
             <p className="mt-2 text-sm leading-7 text-slate-600">
               Tell us about the site and charger you are considering. Email{" "}
               <a
-                href="mailto:info@zip-bolt.com"
+                href="mailto:sales@ziptrax.in"
                 className="font-semibold text-[#2a56c6] hover:underline"
               >
-                info@zip-bolt.com
+                sales@ziptrax.in
               </a>{" "}
               or use the Contact page.
             </p>

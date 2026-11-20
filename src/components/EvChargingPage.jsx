@@ -91,18 +91,6 @@ const PLANS = [
     features: ["120 kW DC output", "Highway-ready", "Premium charging throughput"],
   },
   {
-    plan_id: "ev-180kw",
-    segment_id: "ev-charging",
-    name: "180 kW DC Fast Charger",
-    min_investment: 25000,
-    max_investment: 85000,
-    apy: 16.5,
-    lock_period_days: 150,
-    risk_level: "Medium",
-    description: "Ultra-fast charging infrastructure for high-demand travel corridors.",
-    features: ["180 kW DC output", "Ultra-fast charging", "Built for heavy traffic sites"],
-  },
-  {
     plan_id: "ev-240kw",
     segment_id: "ev-charging",
     name: "240 kW DC Fast Charger",

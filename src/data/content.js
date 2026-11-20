@@ -3,7 +3,6 @@ import charger12kwAcImage from "../assets/charger-12kw-ac.png";
 import charger30kwImage from "../assets/charger-30kw.png";
 import charger60kwImage from "../assets/charger-60kw.png";
 import charger120kwImage from "../assets/charger-120kw.png";
-import charger180kwImage from "../assets/charger-180kw.png";
 import charger240kwImage from "../assets/charger-240kw.png";
 import bessSystemImage from "../assets/bess-system.png";
 import evDcFastChargingImage from "../assets/ev-dc-fast-charging.png";
@@ -350,28 +349,6 @@ export const segments = [
       "Highway volumes can change with route demand, seasonality and nearby competition.",
       "Grid readiness and maintenance response are critical to uptime.",
       "Long-route charging behavior may shift as vehicle ranges improve.",
-    ],
-  },
-  {
-    id: "charger-180kw",
-    name: "180 kW Ultra-Fast Charger",
-    power: "180 kW",
-    site: "Travel hubs, logistics parks and destination stops",
-    useCase: "High-demand travel corridors",
-    description:
-      "Ultra-fast charging for high-traffic routes where throughput and uptime are critical to customer satisfaction.",
-    features: ["Ultra-fast charging", "Supports heavy traffic sites", "Advanced power management"],
-    risk: "Medium Risk",
-    riskLevel: "Medium",
-    yieldRate: 16.5,
-    lockDays: 150,
-    minAmount: 25000,
-    maxAmount: 85000,
-    image: charger180kwImage,
-    riskDrivers: [
-      "High-throughput sites are more exposed to uptime issues and maintenance delays.",
-      "Demand concentration at travel hubs can create sharper peak and off-peak swings.",
-      "Energy costs and power management matter more at this utilization level.",
     ],
   },
   {
