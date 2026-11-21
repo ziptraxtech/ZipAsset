@@ -242,19 +242,19 @@ function Header({ marketplaceSegments }) {
         }`}
       >
         <div className="mx-auto w-[min(1180px,calc(100%-22px))] border-t border-white/10 py-6 md:w-[min(1180px,calc(100%-32px))]">
-          <nav className="flex flex-col gap-2">
+          <nav className="mobile-nav flex flex-col gap-2">
             <a
               href={navItems[0].href}
               onClick={handleNav}
-              className="rounded-xl px-4 py-3 text-sm font-semibold tracking-[0.08em] text-blue-100/80 transition hover:bg-white/8 hover:text-white"
+              className="rounded-xl px-4 py-3 text-sm font-semibold tracking-[0.08em] text-white transition hover:bg-white/8"
             >
               {navItems[0].label}
             </a>
 
             <div className="rounded-xl border border-white/10 bg-white/4 px-4 py-3">
-              <div className="inline-flex items-center gap-2 text-sm font-semibold tracking-[0.08em] text-blue-100/80">
+              <div className="inline-flex items-center gap-2 text-sm font-semibold tracking-[0.08em] text-white">
                 <span className="text-white">Marketplace</span>
-                <span className="inline-flex h-4 w-4 items-center justify-center text-blue-100">
+                <span className="inline-flex h-4 w-4 items-center justify-center">
                   <svg viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5" aria-hidden="true">
                     <path
                       d="M6 8L10 12L14 8"
@@ -272,7 +272,7 @@ function Header({ marketplaceSegments }) {
                     key={segment.id}
                     href="#marketplace"
                     onClick={handleNav}
-                    className="rounded-lg px-3 py-2 text-sm font-medium text-blue-100/70 transition hover:bg-white/8 hover:text-white"
+                    className="rounded-lg px-3 py-2 text-sm font-medium text-white transition hover:bg-white/8"
                   >
                     {chargerMenuLabels[segment.id] ?? segment.power}
                   </a>
@@ -287,7 +287,7 @@ function Header({ marketplaceSegments }) {
                 onClick={handleNav}
                 target={item.external ? "_blank" : undefined}
                 rel={item.external ? "noreferrer" : undefined}
-                className="rounded-xl px-4 py-3 text-sm font-semibold tracking-[0.08em] text-blue-100/80 transition hover:bg-white/8 hover:text-white"
+                className="rounded-xl px-4 py-3 text-sm font-semibold tracking-[0.08em] text-white transition hover:bg-white/8"
               >
                 {item.label}
               </a>
